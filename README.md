@@ -1,5 +1,5 @@
 # sekta
 
-#Deploy
+# Deploy
 Service
-sudo docker-compose up -d --build
+1. sudo docker-compose up -d --build
