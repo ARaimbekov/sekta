@@ -16,9 +16,9 @@ services:
     build: .
     restart: always
     environment:
-      - DB_NAME="sekta_dev"
-      - DB_USERNAME="sektant"
-      - DB_PASSWORD="sektant"
+      - DB_NAME=sekta_dev
+      - DB_USERNAME=sektant
+      - DB_PASSWORD=sektant
       - DB_HOST=db
       - DB_PORT=5432
       - DJANGO_SETTINGS_MODULE=sekta.settings
