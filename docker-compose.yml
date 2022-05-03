@@ -15,8 +15,14 @@ services:
     container_name: dev_backend
     build: .
     restart: always
-    env_file:
-      - dev.env
+    environment:
+     - DB_NAME=sekta_dev
+     - DB_USERNAME=sektant
+     - DB_PASSWORD=sektant
+     - DB_HOST=db
+     - DB_PORT=5432
+     - DJANGO_SETTINGS_MODULE=sekta.settings
+     - DEBUG="TRUE"
     command: gunicorn sekta.wsgi:application --bind 0.0.0.0:5000
     volumes:
      - .:/app
@@ -26,8 +32,11 @@ services:
   db:
     container_name: dev_db
     image: postgres:12.0-alpine
-    env_file:
-      - dev.env
+    environment:
+     - POSTGRES_USER=sektant
+     - POSTGRES_PASSWORD=sektant
+     - POSTGRES_DB=sekta_dev
+
     volumes:
       - postgres_data:/var/lib/postgresql/data/
 
