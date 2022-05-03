@@ -19,7 +19,7 @@ services:
       - DB_NAME="sekta_dev"
       - DB_USERNAME="sektant"
       - DB_PASSWORD="sektant"
-      - DB_HOST="db"
+      - DB_HOST=db
       - DB_PORT=5432
       - DJANGO_SETTINGS_MODULE=sekta.settings
       #- DJANGO_SECRET_KEY="django-insecure-r^el1$0q$x3ndqb*)vl37r6ke=m)#3*%+8h7fxp#d5x(eq368+"
