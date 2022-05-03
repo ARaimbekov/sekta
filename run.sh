@@ -1,4 +1,4 @@
 #!/bin/bash
-sudo docker compose up -d --build
-sudo docker compose exec web python manage.py collectstatic
-sudo docker compose exec web python manage.py migrate
+docker-compose up -d --build
+docker-compose exec web python manage.py collectstatic
+docker-compose exec web python manage.py migrate
