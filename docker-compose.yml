@@ -24,6 +24,7 @@ services:
       - DJANGO_SETTINGS_MODULE=sekta.settings
       #- DJANGO_SECRET_KEY="django-insecure-r^el1$0q$x3ndqb*)vl37r6ke=m)#3*%+8h7fxp#d5x(eq368+"
       - DEBUG="TRUE"
+    command: "python manage.py migrate"
     command: gunicorn sekta.wsgi:application --bind 0.0.0.0:5000
     volumes:
      - .:/app
