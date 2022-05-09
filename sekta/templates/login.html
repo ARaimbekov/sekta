@@ -1,11 +1,13 @@
 {% extends "base_generic.html" %}
 
-{% block title %}Login into account{% endblock %}
-
+<body>
 {% block content %}
+<h2>Login into account</h2>
+
     <form method="POST" class="form-group">
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit" class="btn btn-success">Login</button>
     </form>
 {% endblock %}
+</body>

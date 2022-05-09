@@ -1,15 +1,17 @@
 {% extends "base_generic.html" %}
 
-{% block title %}Мои секты{% endblock %}
+<body>
+{% block content %}
+<h2>Мои секты</h2>
 
 {% for sekta in sekts %}
     <div class="sekta">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">{{ sekta.sektaname }}</h3>
+                <a href="/sekta/{{ sekta.id }}"><h3 class="panel-title">{{ sekta.sektaname }}</h3></a>
             </div>
         </div>
-    {% empty %}
-        <li>Вы ещё не создали ни одной секты</li>
     </div>
 {% endfor %}
+{% endblock %}
+</body>

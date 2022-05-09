@@ -1,0 +1,13 @@
+{% extends "base_generic.html" %}
+
+<body>
+{% block content %}
+<h2>{{ sekta.sektaname }}</h2>
+
+<h3>Гуру: {{ sekta.creator }}</h3>
+<h3>Участники:</h3>
+{% for sektant in participants %}
+    <li>{{sektant}}</li>
+{% endfor %}
+{% endblock %}
+</body>

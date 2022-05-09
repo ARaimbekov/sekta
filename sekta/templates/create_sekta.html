@@ -2,12 +2,12 @@
 
 <body>
 {% block content %}
-<h2>Create an Account</h2>
+<h2>Создание секты</h2>
 
     <form method="POST" class="form-group">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit" class="btn btn-success">Register</button>
+        <button type="submit" class="btn btn-success">Create</button>
     </form>
 {% endblock %}
 </body>
