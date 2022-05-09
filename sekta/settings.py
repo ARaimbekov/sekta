@@ -21,7 +21,7 @@ import os
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-r^el1$0q$x3ndqb*)vl37r6ke=m)#3*%+8h7fxp#d5x(eq368+'
-
+# SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG')
 
@@ -72,6 +72,7 @@ WSGI_APPLICATION = 'sekta.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
+
 
 
 DATABASES = {
