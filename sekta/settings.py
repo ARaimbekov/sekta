@@ -77,8 +77,12 @@ WSGI_APPLICATION = 'sekta.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.environ.get('MYSQL_DATABASE', 'mysql-db'),
+        'USER': os.environ.get('MYSQL_USER', 'mysql-user'),
+        'PASSWORD': os.environ.get('MYSQL_PASSWORD', 'mysql-password'),
+        'HOST': os.environ.get('MYSQL_DATABASE_HOST', 'db'),
+        'PORT': os.environ.get('MYSQL_DATABASE_PORT', 3306),
     }
 }
 
