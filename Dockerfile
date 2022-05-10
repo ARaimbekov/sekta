@@ -2,7 +2,7 @@ FROM python:3.9-slim-buster
 
 WORKDIR /app
 
-RUN adduser --system --home /app --shell /usr/sbin/nologin --no-create-home --disabled-password mewor
+RUN adduser --system --home /app --shell /usr/sbin/nologin --no-create-home --disabled-password sekta
 
 RUN apt update && apt install -y python3-dev default-libmysqlclient-dev build-essential netcat
 
