@@ -1,45 +1,26 @@
-version: '3.7'
+version: '3'
+
 services:
-  nginx:
-    container_name: dev_web
-    restart: on-failure
-    image: nginx:1.19.8
-    volumes:
-      - ./nginx/prod/nginx.conf:/etc/nginx/conf.d/default.conf
-      - static_volume:/app/static
-    ports:
-      - 80:80
-    depends_on:
-      - web
-  web:
-    container_name: dev_backend
+  sekta:
     build: .
+    ports:
+    - 1337:1337
+    restart: unless-stopped
+    depends_on:
+      - mysql
+    links:
+      - mysql
+
+  mysql:
+    image: mysql:5.7
     restart: always
     environment:
-     - DB_NAME=sekta_dev
-     - DB_USERNAME=sektant
-     - DB_PASSWORD=sektant
-     - DB_HOST=db
-     - DB_PORT=5432
-     - DJANGO_SETTINGS_MODULE=sekta.settings
-     - DEBUG="TRUE"
-    command: gunicorn sekta.wsgi:application --bind 0.0.0.0:5000
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: sekta
+      MYSQL_USER: sekta
+      MYSQL_PASSWORD: sekta
     volumes:
-     - .:/app
-     - static_volume:/app/static
-    depends_on:
-     - db
-  db:
-    container_name: dev_db
-    image: postgres:12.0-alpine
-    environment:
-     - POSTGRES_USER=sektant
-     - POSTGRES_PASSWORD=sektant
-     - POSTGRES_DB=sekta_dev
-
-    volumes:
-      - postgres_data:/var/lib/postgresql/data/
+      - mysql_volume:/var/lib/mysql
 
 volumes:
-  static_volume:
-  postgres_data:
+  mysql_volume:

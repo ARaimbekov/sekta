@@ -1,20 +1,15 @@
-FROM python:3.9-alpine
+FROM python:3.9-slim-buster
 
 WORKDIR /app
 
-# set environment variables
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+RUN adduser --system --home /app --shell /usr/sbin/nologin --no-create-home --disabled-password mewor
 
-# install psycopg2 dependencies
-RUN apk update \
-    && apk add postgresql-dev gcc python3-dev musl-dev
+RUN apt update && apt install -y python3-dev default-libmysqlclient-dev build-essential netcat
 
-# install dependencies
-COPY requirements.txt /app/requirements.txt
-RUN pip install --upgrade pip
-RUN pip install --no-cache-dir -r requirements.txt
+COPY requirements.txt .
 
+RUN pip3 install --upgrade pip && pip3 install -r requirements.txt
 
-# copy project
-COPY . .
+COPY app .
+
+ENTRYPOINT ["./run.sh"]
