@@ -6,6 +6,7 @@ class Sektant(AbstractUser):
     username = models.fields.CharField(max_length=50,unique=True)
     password = models.fields.CharField(max_length=128)
     dead = models.fields.BooleanField(default=False)
+    can_be_invited = models.fields.BooleanField(default=True)
 
     def __str__(self):
         return self.username

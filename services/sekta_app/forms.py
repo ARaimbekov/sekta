@@ -26,10 +26,11 @@ class UserLoginForm(AuthenticationForm):
 class RegisterForm(ModelForm):
     username = forms.CharField(max_length=100)
     password = forms.CharField(widget=PasswordInput())
+    can_be_invited = forms.BooleanField()
 
     class Meta:
         model = Sektant
-        fields = ["username", "password"]
+        fields = ["username", "password", "can_be_invited"]
 
     def save(self, *args, commit=True, **kwargs):
         sektant = super().save(*args, commit=commit, **kwargs)
