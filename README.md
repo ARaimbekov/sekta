@@ -1,4 +1,7 @@
 # sekta
 
 # Deploy
-  run.sh -> script for deploy and collect all static files + migrate command
+  sudo docker-compose up --build 
+
+
+  sudo docker-compose up -d
