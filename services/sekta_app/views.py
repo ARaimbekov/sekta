@@ -88,7 +88,7 @@ def invite_to_sekta(request,id):
     sekta = Sekta.objects.get(pk=id)
     if request.user != sekta.creator:
         return HttpResponse(status=403, content='Вы не можете приглашать в чужую секту')
-    users = Sektant.objects.filter(can_be_invited=True)
+    users = [user for user in Sektant.objects.filter(can_be_invited=True) if not is_belong(sekta,user) and user != sekta.creator]
     sekta = Sekta.objects.get(pk=id)
     context = {'sekta':sekta,'users':users}
     return render(request, 'invitation.html', context)
