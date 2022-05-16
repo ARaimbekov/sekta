@@ -61,9 +61,35 @@ def create_sekta(request):
 
 @login_required
 def show_sekta(request,id):
-    sekta = Sekta.objects.filter(id=id)[0]
+    sekta = Sekta.objects.get(pk=id)
     participants = Nickname.objects.filter(sekta=sekta)
     if request.user != sekta.creator and not is_belong(sekta,request.user):
         return HttpResponse(status=403, content='Вы не входите в секту')
     context={'sekta':sekta,'participants':participants}
     return render(request,'sekta.html',context)
+
+#todo: добавить уязвимость к parameter pollution
+@login_required
+def invite_sektant(request):
+    follower = Sektant.objects.get(pk=int(request.GET.get('user')))
+    sekta = Sekta.objects.get(pk=int(request.GET.get('sect')))
+    new_name = request.GET.get('nickname')
+    if request.user != sekta.creator:
+        return HttpResponse(status=403, content='Вы не можете приглашать в чужую секту')
+    if len(Nickname.objects.filter(sektant=follower).filter(sekta=sekta))>0:
+        return HttpResponse(status=400, content='Этот пользователь уже в вашей секте')
+    nickname = Nickname(sektant=follower,sekta=sekta,nickname=new_name)
+    nickname.save()
+    return HttpResponse(status=201, content='Сектант был успешно приглашён')
+
+#form doesn't work. Only nickname parameter passes to form action, user.id and sect.id are missed
+@login_required
+def invite_to_sekta(request,id):
+    sekta = Sekta.objects.get(pk=id)
+    if request.user != sekta.creator:
+        return HttpResponse(status=403, content='Вы не можете приглашать в чужую секту')
+    users = Sektant.objects.filter(can_be_invited=True)
+    sekta = Sekta.objects.get(pk=id)
+    context = {'sekta':sekta,'users':users}
+    return render(request, 'invitation.html', context)
+

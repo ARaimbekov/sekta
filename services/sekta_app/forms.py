@@ -26,7 +26,7 @@ class UserLoginForm(AuthenticationForm):
 class RegisterForm(ModelForm):
     username = forms.CharField(max_length=100)
     password = forms.CharField(widget=PasswordInput())
-    can_be_invited = forms.BooleanField()
+    can_be_invited = forms.BooleanField(required=False)
 
     class Meta:
         model = Sektant
