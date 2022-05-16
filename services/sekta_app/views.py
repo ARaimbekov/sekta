@@ -38,9 +38,10 @@ def login(request):
     return render(request, 'login.html', context)
 
 @login_required
-def list_sekts_created_by_user(request):
+def list_user_sekts(request):
     user_sekts = Sekta.objects.filter(creator=request.user)
-    context = {'sekts':user_sekts}
+    member_sekts = [sekt for nickname.sekta in Nickname.objects.filter(sektant=request.user)]
+    context = {'user_sekts':user_sekts,'member_sekts':member_sekts}
     return render(request,'user_sekts_list.html',context)
 
 @login_required
