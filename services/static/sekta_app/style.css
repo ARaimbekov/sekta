@@ -26,10 +26,24 @@ body{
 
 h1{
     padding-bottom: 50px;
-    color: #000;
+    color: #fff;
     font-weight: lighter;
     color: whitesmoke;
     text-align: center;   
+}
+h2{
+    padding-bottom: 50px;
+    color: #fff;
+    font-weight: lighter;
+    color: whitesmoke;
+    text-align: center;
+}
+h3{
+    padding-bottom: 50px;
+    color: #fff;
+    font-weight: lighter;
+    color: whitesmoke;
+    text-align: center;
 }
 
 input{
