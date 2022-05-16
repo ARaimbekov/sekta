@@ -6,8 +6,8 @@
 
 <h3>Гуру: {{ sekta.creator }}</h3>
 <h3>Участники:</h3>
-{% for sektant in participants %}
-    <li>{{sektant}}</li>
+{% for nickname in participants %}
+    <li>{{ nickname.sektant }} True name: {{ nickname.nickname }}</li>
 {% endfor %}
 
 <button type="button" onclick="location.href='{{ sekta.id }}/invite'">Invite new followers</button>

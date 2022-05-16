@@ -70,6 +70,7 @@ def show_sekta(request,id):
     return render(request,'sekta.html',context)
 
 #todo: добавить уязвимость к parameter pollution
+#todo: шифрование для никнейма
 @login_required
 def invite_sektant(request):
     follower = Sektant.objects.get(pk=int(request.GET.get('user')))
