@@ -22,11 +22,14 @@ class Sekta(models.Model):
 
 
 class Nickname(models.Model):
-    sektant = models.OneToOneField(Sektant,on_delete=models.CASCADE)
-    sekta = models.OneToOneField(Sekta,on_delete=models.CASCADE)
+    sektant = models.ForeignKey(Sektant,on_delete=models.CASCADE)
+    sekta = models.ForeignKey(Sekta,on_delete=models.CASCADE)
     nickname = models.fields.CharField(max_length=50)
 
     def __str__(self):
         return self.nickname
+
+    class Meta:
+        unique_together=['sektant','sekta']
 
 

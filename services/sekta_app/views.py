@@ -88,7 +88,7 @@ def invite_sektant(request):
     nickname.save()
     return HttpResponse(status=201, content='Сектант был успешно приглашён')
 
-#form doesn't work. Only nickname parameter passes to form action, user.id and sect.id are missed
+#form doesn't work. Only nickname parameter passes to form action, user.id and sect.id are missed + needed absolute path instead relative
 @login_required
 def invite_to_sekta(request,id):
     sekta = Sekta.objects.get(pk=id)
