@@ -10,7 +10,8 @@
     <li>{{ nickname.sektant }} True name: {{ nickname.nickname }}</li>
 {% endfor %}
 
-<button type="button" onclick="location.href='{{ sekta.id }}/invite'">Invite new followers</button>
-
+{% if creator %}
+    <button type="button" onclick="location.href='{{ sekta.id }}/invite'">Invite new followers</button>
+{% endif %}
 {% endblock %}
 </body>
