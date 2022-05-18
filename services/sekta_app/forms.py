@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from django.forms import ModelForm, PasswordInput
 
-from .models import Sektant
+from .models import Sektant, Sekta
 
 class UserLoginForm(AuthenticationForm):
     class Meta:
@@ -26,10 +26,11 @@ class UserLoginForm(AuthenticationForm):
 class RegisterForm(ModelForm):
     username = forms.CharField(max_length=100)
     password = forms.CharField(widget=PasswordInput())
+    can_be_invited = forms.BooleanField(required=False)
 
     class Meta:
         model = Sektant
-        fields = ["username", "password"]
+        fields = ["username", "password", "can_be_invited"]
 
     def save(self, *args, commit=True, **kwargs):
         sektant = super().save(*args, commit=commit, **kwargs)
@@ -37,3 +38,16 @@ class RegisterForm(ModelForm):
         if commit:
             sektant.save()
         return sektant
+
+class SektaCreationForm(ModelForm):
+    sektaname = forms.CharField(max_length=100)
+
+    class Meta:
+        model = Sekta
+        fields = ['sektaname']
+
+    #todo: select crypto primitives and set private key generation
+    def save(self, user):
+        sekta = Sekta(creator=user,sektaname=self.cleaned_data['sektaname'],private_key='changeme')
+        sekta.save()
+        return sekta
