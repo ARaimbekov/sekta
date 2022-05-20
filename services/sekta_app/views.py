@@ -99,7 +99,10 @@ def invite_sektant(request):
 #form doesn't work. Only nickname parameter passes to form action, user.id and sect.id are missed + needed absolute path instead relative
 @login_required
 def invite_to_sekta(request,id):
-    sekta = Sekta.objects.get(pk=id)
+    try:
+        sekta = Sekta.objects.get(pk=id)
+    except Sekta.DoesNotExist:
+        return HttpResponse(status=400, content='Неверный id пользователя или секты')
     if request.user != sekta.creator:
         return HttpResponse(status=403, content='Вы не можете приглашать в чужую секту')
     users = [user for user in Sektant.objects.filter(can_be_invited=True) if not is_belong(sekta,user) and user != sekta.creator]
@@ -108,7 +111,10 @@ def invite_to_sekta(request,id):
 
 @login_required
 def sacrifice(request,id):
-    sekta = Sekta.objects.get(pk=id)
+    try:
+        sekta = Sekta.objects.get(pk=id)
+    except Sekta.DoesNotExist:
+        return HttpResponse(status=400, content='Неверный id пользователя или секты')
     if request.user != sekta.creator:
         return HttpResponse(status=403, content='Вы не можете совершать жертвоприношения в чужой секте')
     users = [user for user in Sektant.objects.filter(dead=False) if
@@ -118,8 +124,14 @@ def sacrifice(request,id):
 
 @login_required
 def sacrifice_sektant(request,id):
-    follower = Sektant.objects.get(pk=int(request.GET.get('user')))
-    sekta = Sekta.objects.get(pk=id)
+    try:
+        follower = Sektant.objects.get(pk=int(request.GET.get('user')))
+    except Sektant.DoesNotExist:
+        return HttpResponse(status=400, content='Неверный id пользователя или секты')
+    try:
+        sekta = Sekta.objects.get(pk=id)
+    except Sekta.DoesNotExist:
+        return HttpResponse(status=400, content='Неверный id пользователя или секты')
     if request.user != sekta.creator:
         return HttpResponse(status=403, content='Вы не можете совершать жертвоприношения в чужой секте')
     if follower.dead:
