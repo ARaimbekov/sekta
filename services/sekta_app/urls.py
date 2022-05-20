@@ -9,5 +9,7 @@ urlpatterns = [
     path('create_sekta',views.create_sekta,name='create-sekta'),
     path('sekta/<int:id>',views.show_sekta,name='show-sekta'),
     path('sekta/<int:id>/invite',views.invite_to_sekta,name='sekta-invite'),
-    path('invite',views.invite_sektant,name='invite-sektant')
+    path('invite',views.invite_sektant,name='invite-sektant'),
+    path('sekta/<int:id>/sacrifice',views.sacrifice,name='sekta-sacrifice'),
+    path('sekta/<int:id>/sacrifice_sektant', views.sacrifice_sektant, name='sacrifice-sektant'),
 ]

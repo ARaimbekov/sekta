@@ -77,13 +77,21 @@ def show_sekta(request,id):
 #todo: шифрование для никнейма
 @login_required
 def invite_sektant(request):
-    follower = Sektant.objects.get(pk=int(request.GET.get('user')))
-    sekta = Sekta.objects.get(pk=int(request.GET.get('sect')))
+    try:
+        follower = Sektant.objects.get(pk=int(request.GET.get('user')))
+    except Sektant.DoesNotExist:
+        return HttpResponse(status=400, content='Неверный id пользователя или секты')
+    try:
+        sekta = Sekta.objects.get(pk=int(request.GET.get('sect')))
+    except Sekta.DoesNotExist:
+        return HttpResponse(status=400, content='Неверный id пользователя или секты')
     new_name = request.GET.get('nickname')
     if request.user != sekta.creator:
         return HttpResponse(status=403, content='Вы не можете приглашать в чужую секту')
     if len(Nickname.objects.filter(sektant=follower).filter(sekta=sekta))>0:
         return HttpResponse(status=400, content='Этот пользователь уже в вашей секте')
+    if follower.can_be_invited==False:
+        return HttpResponse(status=400, content='Пользователь запретил себя приглашать')
     nickname = Nickname(sektant=follower,sekta=sekta,nickname=new_name)
     nickname.save()
     return HttpResponse(status=201, content='Сектант был успешно приглашён')
@@ -95,7 +103,32 @@ def invite_to_sekta(request,id):
     if request.user != sekta.creator:
         return HttpResponse(status=403, content='Вы не можете приглашать в чужую секту')
     users = [user for user in Sektant.objects.filter(can_be_invited=True) if not is_belong(sekta,user) and user != sekta.creator]
-    sekta = Sekta.objects.get(pk=id)
     context = {'sekta':sekta,'users':users}
     return render(request, 'invitation.html', context)
+
+@login_required
+def sacrifice(request,id):
+    sekta = Sekta.objects.get(pk=id)
+    if request.user != sekta.creator:
+        return HttpResponse(status=403, content='Вы не можете совершать жертвоприношения в чужой секте')
+    users = [user for user in Sektant.objects.filter(dead=False) if
+              is_belong(sekta, user) and user != sekta.creator]
+    context = {'sekta':sekta,'users':users}
+    return render(request, 'sacrifice.html', context)
+
+@login_required
+def sacrifice_sektant(request,id):
+    follower = Sektant.objects.get(pk=int(request.GET.get('user')))
+    sekta = Sekta.objects.get(pk=id)
+    if request.user != sekta.creator:
+        return HttpResponse(status=403, content='Вы не можете совершать жертвоприношения в чужой секте')
+    if follower.dead:
+        return HttpResponse(status=400, content='Этот пользователь уже завершил земной путь')
+    follower.dead=True
+    #placeholder для расшифрования никнейма
+    nickname=Nickname.objects.filter(sektant=follower,sekta=sekta)[0]
+    nickname.nickname='Dead '+nickname.nickname
+    nickname.save()
+    follower.save()
+    return HttpResponse(status=201, content='Сектант был успешно принесён в жертву')
 

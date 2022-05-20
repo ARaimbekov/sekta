@@ -13,5 +13,8 @@
 {% if creator %}
     <button type="button" onclick="location.href='{{ sekta.id }}/invite'">Invite new followers</button>
 {% endif %}
+{% if creator %}
+    <button type="button" onclick="location.href='{{ sekta.id }}/sacrifice'">Sacrifice followers</button>
+{% endif %}
 {% endblock %}
 </body>
