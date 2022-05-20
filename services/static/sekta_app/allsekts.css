@@ -1,0 +1,99 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+
+}
+
+@font-face {
+    font-family: medusa;
+    src: url(fonts/MedusaGothic\ D.otf);
+}
+
+:root {
+    --main-color: rgb(48, 48, 48);
+    --body-color: rgb(16,16,16);
+    --bg-color: rgb(31, 31, 31);
+}
+
+body {
+    background-color: var(--body-color);
+    height: 100vh;
+    margin: 0px;
+    overflow: hidden;
+    padding: 0px;
+}
+
+#cards{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    max-width: 916px;
+    width: calc(100% - 20px);
+}
+.card {
+    background-color: rgb(255, 255, 255, 0.1);
+    border: 0.5px solid rgb(255, 255,255, 0.1);
+    border-radius: 10px;
+    cursor: pointer;
+    height: 160px;
+    width: 200px;
+}
+
+
+.sidebar {
+    width: 240px;
+    background-color: var(--main-color);
+    height: 100vh;
+    position: fixed;
+}
+
+.logo_content {
+    height: 67px;
+    background-color: var(--bg-color);
+    font-family: medusa;
+
+}
+
+.logo_content .logo {
+    color:#fff;
+    display: flex;
+    background-color: var(--bg-color);
+    padding: 20px;
+}
+
+.sidebar ul {
+    padding: 20px;
+    
+}
+
+.sidebar ul li {
+    list-style: none;
+}
+
+.sidebar ul li a {
+    color: #fff;
+    text-decoration: none;
+    display: flex;
+    font-size: 14px;
+    align-items: center;
+    padding: 10px;
+    transition: .4s easy;
+    font-family: medusa;
+}
+
+.sidebar ul li a:hover {
+    background-color: #fff;
+    color: rgb(20, 20, 20);
+    border-radius: 5px;
+}
+
+.sidebar ul li a span {
+    display: block;
+}
+
+.content{
+    position: relative;
+    top: 100px;
+    left: 350px;
+}

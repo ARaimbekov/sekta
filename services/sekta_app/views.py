@@ -8,6 +8,10 @@ from .forms import UserLoginForm, RegisterForm, SektaCreationForm
 from .models import Sektant, Sekta, Nickname
 from .helpers import is_belong
 
+
+def home(request):
+    return render(request, 'home.html', {})
+
 def register(request):
     context={}
     if request.method == 'POST':
