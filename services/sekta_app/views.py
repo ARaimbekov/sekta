@@ -6,7 +6,7 @@ from django.urls import reverse
 
 from .forms import UserLoginForm, RegisterForm, SektaCreationForm
 from .models import Sektant, Sekta, Nickname
-from .helpers import is_belong
+from .helpers import is_belong, encrypt, decrypt
 
 def register(request):
     context={}
@@ -74,7 +74,6 @@ def show_sekta(request,id):
     return render(request,'sekta.html',context)
 
 #todo: добавить уязвимость к parameter pollution
-#todo: шифрование для никнейма
 @login_required
 def invite_sektant(request):
     try:
@@ -92,7 +91,7 @@ def invite_sektant(request):
         return HttpResponse(status=400, content='Этот пользователь уже в вашей секте')
     if follower.can_be_invited==False:
         return HttpResponse(status=400, content='Пользователь запретил себя приглашать')
-    nickname = Nickname(sektant=follower,sekta=sekta,nickname=new_name)
+    nickname = Nickname(sektant=follower,sekta=sekta,nickname=encrypt((new_name).encode('utf-8'),sekta.private_key))
     nickname.save()
     return HttpResponse(status=201, content='Сектант был успешно приглашён')
 
@@ -138,9 +137,14 @@ def sacrifice_sektant(request,id):
         return HttpResponse(status=400, content='Этот пользователь уже завершил земной путь')
     follower.dead=True
     #placeholder для расшифрования никнейма
-    nickname=Nickname.objects.filter(sektant=follower,sekta=sekta)[0]
-    nickname.nickname='Dead '+nickname.nickname
-    nickname.save()
+    nicknames=Nickname.objects.filter(sektant=follower)
+    print(str(nicknames))
+    for n in nicknames:
+        print(str(n.nickname))
+        sekta = n.sekta
+        n.nickname=decrypt(n.nickname,sekta.private_key)
+        print(str(n.nickname))
+        n.save()
     follower.save()
     return HttpResponse(status=201, content='Сектант был успешно принесён в жертву')
 

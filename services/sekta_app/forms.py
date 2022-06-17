@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from django.forms import ModelForm, PasswordInput
+from secrets import token_bytes
 
 from .models import Sektant, Sekta
 
@@ -48,6 +49,6 @@ class SektaCreationForm(ModelForm):
 
     #todo: select crypto primitives and set private key generation
     def save(self, user):
-        sekta = Sekta(creator=user,sektaname=self.cleaned_data['sektaname'],private_key='changeme')
+        sekta = Sekta(creator=user,sektaname=self.cleaned_data['sektaname'],private_key=token_bytes(16))
         sekta.save()
         return sekta
