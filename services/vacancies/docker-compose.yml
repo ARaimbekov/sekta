@@ -1,0 +1,7 @@
+services:
+  vacancies:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    ports:
+      - "8080:8080"
