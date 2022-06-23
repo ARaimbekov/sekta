@@ -91,11 +91,10 @@ def invite_sektant(request,id):
         return HttpResponse(status=400, content='Этот пользователь уже в вашей секте')
     if follower.can_be_invited==False:
         return HttpResponse(status=400, content='Пользователь запретил себя приглашать')
-    nickname = Nickname(sektant=follower,sekta=sekta,nickname=encrypt((new_name).encode('utf-8'),sekta.private_key))
+    nickname = Nickname(sektant=follower,sekta=Sekta.objects.get(pk=id),nickname=encrypt((new_name).encode('utf-8'),sekta.private_key))
     nickname.save()
-    return HttpResponse(status=201, content='Сектант был успешно приглашён')
+    return HttpResponse(status=201, content=f'Сектант был успешно приглашен <a href="/sekta/{sekta.id}"><h3 class="panel-title">Назад в секту</h3></a>')
 
-#form doesn't work. Only nickname parameter passes to form action, user.id and sect.id are missed + needed absolute path instead relative
 @login_required
 def invite_to_sekta(request,id):
     try:
@@ -136,7 +135,6 @@ def sacrifice_sektant(request,id):
     if follower.dead:
         return HttpResponse(status=400, content='Этот пользователь уже завершил земной путь')
     follower.dead=True
-    #placeholder для расшифрования никнейма
     nicknames=Nickname.objects.filter(sektant=follower)
     print(str(nicknames))
     for n in nicknames:
@@ -146,5 +144,5 @@ def sacrifice_sektant(request,id):
         print(str(n.nickname))
         n.save()
     follower.save()
-    return HttpResponse(status=201, content='Сектант был успешно принесён в жертву')
+    return HttpResponse(status=201, content=f'Сектант был успешно принесён в жертву <a href="/sekta/{sekta.id}"><h3 class="panel-title">Назад в секту</h3></a>')
 
