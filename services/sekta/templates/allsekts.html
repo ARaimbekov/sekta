@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="{% static 'sekta_app/allsekts.css' %}">
+    <title>ВСекте</title>
+</head>
+
+
+<body>
+    {% block content %}
+    <div class="sidebar">
+
+        <div class="logo_content">
+            <div class="logo">
+                <h3 class="logo-name">
+                    Sekta
+                </h3>
+            </div>
+        </div>
+
+        <ul class="nav">
+            <li>
+                <a href="#">
+                    <span>My Sekts</span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <span>Create Sekt</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="#">
+                    <span>All Sekts</span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <span>Logout</span>
+                </a>
+            </li>
+
+        </ul>
+
+    </div>
+    <div class="content">
+        <div id="cards">
+            <div class="card"></div>
+            <div class="card"></div>
+            <div class="card"></div>
+            <div class="card"></div>
+            <div class="card"></div>
+            <div class="card"></div>
+            <div class="card"></div>
+            <div class="card"></div>
+            <div class="card"></div>
+            <div class="card"></div>
+            <div class="card"></div>
+            <div class="card"></div>
+        </div>
+    </div>
+
+{% endblock %}
+</body>

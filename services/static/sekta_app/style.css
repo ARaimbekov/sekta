@@ -4,8 +4,8 @@
 
 }
 @font-face {
-    font-family: medusa;
-    src: url(fonts/MedusaGothic\ D.otf);
+    font-family: Uroob;
+    src: url(fonts/Uroob.woff.ttf);
 }
 
 body{
@@ -14,7 +14,9 @@ body{
     background-image: url(images/bg.jpg);
     background-size: 75%;
     background-position: center;
-    font-family: medusa ;
+    font-family: Uroob ;
+    font-size: 20px;
+    color: #fff;
 }
 
 .login-box{
@@ -30,20 +32,6 @@ h1{
     font-weight: lighter;
     color: whitesmoke;
     text-align: center;   
-}
-h2{
-    padding-bottom: 50px;
-    color: #fff;
-    font-weight: lighter;
-    color: whitesmoke;
-    text-align: center;
-}
-h3{
-    padding-bottom: 50px;
-    color: #fff;
-    font-weight: lighter;
-    color: whitesmoke;
-    text-align: center;
 }
 
 input{
