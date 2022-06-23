@@ -4,8 +4,8 @@
 
 }
 @font-face {
-    font-family: medusa;
-    src: url(fonts/MedusaGothic\ D.otf);
+    font-family: Uroob;
+    src: url(fonts/Uroob.woff.ttf);
 }
 
 body{
@@ -14,7 +14,8 @@ body{
     background-image: url(images/bg.jpg);
     background-size: 75%;
     background-position: center;
-    font-family: medusa ;
+    font-family: Uroob ;
+    font-size: 20px;
     color: #fff;
 }
 
