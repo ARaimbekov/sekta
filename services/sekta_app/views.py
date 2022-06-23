@@ -47,6 +47,8 @@ def list_user_sekts(request):
 @login_required
 def create_sekta(request):
     context={}
+    if request.user.dead:
+        return HttpResponse(status=403, content='Вы мертвы')
     if request.method == 'POST':
         form = SektaCreationForm(data=request.POST)
         if form.is_valid():
@@ -67,7 +69,7 @@ def show_sekta(request,id):
     if request.user != sekta.creator and not is_belong(sekta,request.user):
         return HttpResponse(status=403, content='Вы не входите в секту')
     context={'sekta':sekta,'participants':participants}
-    if request.user==sekta.creator:
+    if request.user==sekta.creator and request.user.dead==False:
         context['creator']=True
     else:
         context['creator']=False
@@ -86,6 +88,8 @@ def invite_sektant(request,id):
     new_name = request.GET.get('nickname')
     if request.user != sekta.creator:
         return HttpResponse(status=403, content='Вы не можете приглашать в чужую секту')
+    if request.user.dead:
+        return HttpResponse(status=403, content='Вы мертвы')
     if len(Nickname.objects.filter(sektant=follower).filter(sekta=sekta))>0:
         return HttpResponse(status=400, content='Этот пользователь уже в вашей секте')
     if follower.can_be_invited==False:
@@ -102,6 +106,8 @@ def invite_to_sekta(request,id):
         return HttpResponse(status=400, content='Неверный id пользователя или секты')
     if request.user != sekta.creator:
         return HttpResponse(status=403, content='Вы не можете приглашать в чужую секту')
+    if request.user.dead:
+        return HttpResponse(status=403, content='Вы мертвы')
     users = [user for user in Sektant.objects.filter(can_be_invited=True) if not is_belong(sekta,user) and user != sekta.creator]
     context = {'sekta':sekta,'users':users}
     return render(request, 'invitation.html', context)
@@ -114,6 +120,8 @@ def sacrifice(request,id):
         return HttpResponse(status=400, content='Неверный id пользователя или секты')
     if request.user != sekta.creator:
         return HttpResponse(status=403, content='Вы не можете совершать жертвоприношения в чужой секте')
+    if request.user.dead:
+        return HttpResponse(status=403, content='Вы мертвы')
     users = [user for user in Sektant.objects.filter(dead=False) if
               is_belong(sekta, user) and user != sekta.creator]
     context = {'sekta':sekta,'users':users}
@@ -131,6 +139,8 @@ def sacrifice_sektant(request,id):
         return HttpResponse(status=400, content='Неверный id пользователя или секты')
     if request.user != sekta.creator:
         return HttpResponse(status=403, content='Вы не можете совершать жертвоприношения в чужой секте')
+    if request.user.dead:
+        return HttpResponse(status=403, content='Вы мертвы')
     if follower.dead:
         return HttpResponse(status=400, content='Этот пользователь уже завершил земной путь')
     follower.dead=True
