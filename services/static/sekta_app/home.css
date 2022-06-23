@@ -5,7 +5,7 @@
 }
 @font-face {
     font-family: medusa;
-    src: url(fonts/MedusaGothic\ D.otf);
+    src: url(fonts/Uroob.woff.ttf);
 }
 
 :root{
@@ -18,9 +18,9 @@ body{
     padding: 0;
     background-image: url(images/bg.jpg);
     background-color: var(--body-color);
-    background-size: 75%;
-    background-position: center;
-    font-family: medusa ;
+    background-size: cover;
+    background-position: top;
+    font-family: Uroob ;
 }
 
 .container{
