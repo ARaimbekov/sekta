@@ -73,7 +73,6 @@ def show_sekta(request,id):
         context['creator']=False
     return render(request,'sekta.html',context)
 
-#todo: добавить уязвимость к parameter pollution
 @login_required
 def invite_sektant(request,id):
     try:
@@ -91,7 +90,7 @@ def invite_sektant(request,id):
         return HttpResponse(status=400, content='Этот пользователь уже в вашей секте')
     if follower.can_be_invited==False:
         return HttpResponse(status=400, content='Пользователь запретил себя приглашать')
-    nickname = Nickname(sektant=follower,sekta=Sekta.objects.get(pk=id),nickname=encrypt((new_name).encode('utf-8'),sekta.private_key))
+    nickname = Nickname(sektant=follower,sekta=Sekta.objects.get(pk=id),nickname=encrypt((new_name).encode('utf-8'),Sekta.objects.get(pk=id).private_key))
     nickname.save()
     return HttpResponse(status=201, content=f'Сектант был успешно приглашен <a href="/sekta/{sekta.id}"><h3 class="panel-title">Назад в секту</h3></a>')
 
