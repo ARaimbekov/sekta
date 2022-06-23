@@ -50,7 +50,6 @@ class SektaCreationForm(ModelForm):
         model = Sekta
         fields = ['sektaname']
 
-    # todo: select crypto primitives and set private key generation
     def save(self, user):
         sekta = Sekta(creator=user,sektaname=self.cleaned_data['sektaname'],private_key=token_bytes(16))
         sekta.save()
