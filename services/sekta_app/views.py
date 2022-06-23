@@ -65,7 +65,7 @@ def create_sekta(request):
 @login_required
 def show_sekta(request,id):
     sekta = Sekta.objects.get(pk=id)
-    participants = Nickname.objects.filter(sekta=sekta)
+    participants = [[sektant,[nickname.__str__() for nickname in Nickname.objects.filter(sektant=sektant)]] for sektant in Sektant.objects.all() if is_belong(sekta,sektant)]
     if request.user != sekta.creator and not is_belong(sekta,request.user):
         return HttpResponse(status=403, content='Вы не входите в секту')
     context={'sekta':sekta,'participants':participants}
