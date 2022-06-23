@@ -8,7 +8,7 @@
     <div class="user">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">{{ user.username }}</h3><form><input type="text" placeholder="True name" name="nickname" value="" action="invite?user={{ user.id }}&sect={{ sekta.id }}&nickname='+document.getElementsByName('nickname').value"><button type="submit" class="btn btn-success">invite</button></form>
+                <h3 class="panel-title">{{ user.username }}</h3><form action="invite_sektant"><input type="text" placeholder="True name" name="nickname" value=""><input type="hidden" name="sect" value={{ sekta.id }}><input type="hidden" name="user" value={{ user.id }}><button type="submit" class="btn btn-success">invite</button></form>
             </div>
         </div>
     </div>

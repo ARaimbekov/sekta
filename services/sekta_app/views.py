@@ -75,7 +75,7 @@ def show_sekta(request,id):
 
 #todo: добавить уязвимость к parameter pollution
 @login_required
-def invite_sektant(request):
+def invite_sektant(request,id):
     try:
         follower = Sektant.objects.get(pk=int(request.GET.get('user')))
     except Sektant.DoesNotExist:
