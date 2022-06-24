@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, HttpResponse
-from django.urls import reverse
+from django.core.paginator import Paginator
 
 from .forms import UserLoginForm, RegisterForm, SektaCreationForm
 from .models import Sektant, Sekta, Nickname
@@ -53,6 +53,15 @@ def list_user_sekts(request):
     member_sekts = [nickname.sekta for nickname in Nickname.objects.filter(sektant=request.user)]
     context = {'user_sekts':user_sekts,'member_sekts':member_sekts}
     return render(request,'user_sekts_list.html',context)
+
+@login_required
+def list_all_sekts(request):
+    sekts = Sekta.objects.all()
+    paginator = Paginator(sekts, 13)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'all_sekts_list.html', {'page_obj': page_obj})
 
 @login_required
 def create_sekta(request):
