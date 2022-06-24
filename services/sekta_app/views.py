@@ -157,6 +157,8 @@ def sacrifice_sektant(request,id):
         sekta = Sekta.objects.get(pk=id)
     except Sekta.DoesNotExist:
         return HttpResponse(status=400, content='Неверный id пользователя или секты')
+    if not is_belong(sekta,follower):
+        return HttpResponse(status=403, content='Этот пользователь не состоит в вашей секте')
     if request.user != sekta.creator:
         return HttpResponse(status=403, content='Вы не можете совершать жертвоприношения в чужой секте')
     if request.user.dead:
