@@ -43,6 +43,11 @@ def login(request):
     return render(request, 'login.html', context)
 
 @login_required
+def logout(request):
+    auth.logout(request)
+    return redirect('/welcome/')
+
+@login_required
 def list_user_sekts(request):
     user_sekts = Sekta.objects.filter(creator=request.user)
     member_sekts = [nickname.sekta for nickname in Nickname.objects.filter(sektant=request.user)]
