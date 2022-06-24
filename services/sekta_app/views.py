@@ -98,6 +98,8 @@ def invite_sektant(request,id):
         return HttpResponse(status=400, content='Этот пользователь уже в вашей секте')
     if follower.can_be_invited==False:
         return HttpResponse(status=400, content='Пользователь запретил себя приглашать')
+    if follower.dead:
+        return HttpResponse(status=400, content='Этот пользователь уже завершил земной путь')
     nickname = Nickname(sektant=follower,sekta=Sekta.objects.get(pk=id),nickname=encrypt((new_name).encode('utf-8'),Sekta.objects.get(pk=id).private_key))
     nickname.save()
     return HttpResponse(status=201, content=f'Сектант был успешно приглашен <a href="/sekta/{sekta.id}"><h3 class="panel-title">Назад в секту</h3></a>')
@@ -112,7 +114,7 @@ def invite_to_sekta(request,id):
         return HttpResponse(status=403, content='Вы не можете приглашать в чужую секту')
     if request.user.dead:
         return HttpResponse(status=403, content='Вы мертвы')
-    users = [user for user in Sektant.objects.filter(can_be_invited=True) if not is_belong(sekta,user) and user != sekta.creator]
+    users = [user for user in Sektant.objects.filter(can_be_invited=True) if not is_belong(sekta,user) and user != sekta.creator and not user.dead]
     context = {'sekta':sekta,'users':users}
     return render(request, 'invitation.html', context)
 
