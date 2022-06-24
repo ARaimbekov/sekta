@@ -51,17 +51,17 @@ def logout(request):
 def list_user_sekts(request):
     user_sekts = Sekta.objects.filter(creator=request.user)
     member_sekts = [nickname.sekta for nickname in Nickname.objects.filter(sektant=request.user)]
-    context = {'user_sekts':user_sekts,'member_sekts':member_sekts}
+    context = {'user_sekts':user_sekts,'member_sekts':member_sekts,'user':request.user}
     return render(request,'user_sekts_list.html',context)
 
 @login_required
 def list_all_sekts(request):
-    sekts = Sekta.objects.all()
+    sekts = Sekta.objects.all().order_by('-id')
     paginator = Paginator(sekts, 13)
 
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return render(request, 'all_sekts_list.html', {'page_obj': page_obj})
+    return render(request, 'all_sekts_list.html', {'page_obj': page_obj,'user':request.user})
 
 @login_required
 def create_sekta(request):
@@ -78,8 +78,7 @@ def create_sekta(request):
             return HttpResponse(status=400,content='Секта с таким именем уже есть')
     else:
         form = SektaCreationForm()
-        context['form'] = form
-        return render(request,'create_sekta.html',context)
+        return render(request,'create_sekta.html',{'form':form,'user':request.user})
 
 @login_required
 def show_sekta(request,id):
@@ -87,7 +86,7 @@ def show_sekta(request,id):
     participants = [[sektant,[nickname.__str__() for nickname in Nickname.objects.filter(sektant=sektant)]] for sektant in Sektant.objects.all() if is_belong(sekta,sektant)]
     if request.user != sekta.creator and not is_belong(sekta,request.user):
         return HttpResponse(status=403, content='Вы не входите в секту')
-    context={'sekta':sekta,'participants':participants}
+    context={'sekta':sekta,'participants':participants,'user':request.user}
     if request.user==sekta.creator and request.user.dead==False:
         context['creator']=True
     else:
@@ -130,7 +129,7 @@ def invite_to_sekta(request,id):
     if request.user.dead:
         return HttpResponse(status=403, content='Вы мертвы')
     users = [user for user in Sektant.objects.filter(can_be_invited=True) if not is_belong(sekta,user) and user != sekta.creator and not user.dead]
-    context = {'sekta':sekta,'users':users}
+    context = {'sekta':sekta,'users':users,'user':request.user}
     return render(request, 'invitation.html', context)
 
 @login_required
@@ -145,7 +144,7 @@ def sacrifice(request,id):
         return HttpResponse(status=403, content='Вы мертвы')
     users = [user for user in Sektant.objects.filter(dead=False) if
               is_belong(sekta, user) and user != sekta.creator]
-    context = {'sekta':sekta,'users':users}
+    context = {'sekta':sekta,'users':users,'user':request.user}
     return render(request, 'sacrifice.html', context)
 
 @login_required
