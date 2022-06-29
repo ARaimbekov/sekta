@@ -4,17 +4,19 @@
 
 }
 @font-face {
-    font-family: medusa;
-    src: url(fonts/MedusaGothic\ D.otf);
+    font-family: Uroob;
+    src: url(fonts/Uroob.woff.ttf);
 }
 
 body{
-    margin: 0;
     padding: 0;
-    background-image: url(images/bg.jpg);
-    background-size: 75%;
-    background-position: center;
-    font-family: medusa ;
+    background-image: url(images/bg2.jpg);
+    background-size: cover;
+    background-position: top;
+    font-family: Uroob ;
+    font-size: 36px;
+    color: #fff;
+    margin-left: 40%;
 }
 
 .login-box{
@@ -30,20 +32,6 @@ h1{
     font-weight: lighter;
     color: whitesmoke;
     text-align: center;   
-}
-h2{
-    padding-bottom: 50px;
-    color: #fff;
-    font-weight: lighter;
-    color: whitesmoke;
-    text-align: center;
-}
-h3{
-    padding-bottom: 50px;
-    color: #fff;
-    font-weight: lighter;
-    color: whitesmoke;
-    text-align: center;
 }
 
 input{
@@ -71,5 +59,18 @@ button{
     border: 0px;    
     border-radius: 5px;
 
+}
+
+.w3-sidebar{
+    background: black;
+    top: 0%;
+    left: 0%;
+    width: 20%;
+    height: 100%;
+    position:absolute;
+    font-size: 30px;
+    background-size: cover;
+    background-position: top;
+    margin-left: 0%;
 }
 

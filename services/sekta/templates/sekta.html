@@ -1,4 +1,4 @@
-{% extends "base_generic.html" %}
+{% extends "base_generic_authorized.html" %}
 
 <body>
 {% block content %}
@@ -6,12 +6,15 @@
 
 <h3>Гуру: {{ sekta.creator }}</h3>
 <h3>Участники:</h3>
-{% for nickname in participants %}
-    <li>{{ nickname.sektant }} True name: {{ nickname.nickname }}</li>
+{% for sektant,nickname in participants %}
+    <li>{{ sektant.username }} True name: {{ nickname }}</li>
 {% endfor %}
 
 {% if creator %}
     <button type="button" onclick="location.href='{{ sekta.id }}/invite'">Invite new followers</button>
+{% endif %}
+{% if creator %}
+    <button type="button" onclick="location.href='{{ sekta.id }}/sacrifice'">Sacrifice followers</button>
 {% endif %}
 {% endblock %}
 </body>

@@ -14,7 +14,7 @@ class Sektant(AbstractUser):
 
 class Sekta(models.Model):
     sektaname = models.fields.CharField(max_length=50,unique=True)
-    private_key = models.fields.CharField(max_length=32)
+    private_key = models.fields.BinaryField()
     creator = models.ForeignKey(Sektant,on_delete=models.CASCADE)
 
     def __str__(self):
@@ -24,10 +24,13 @@ class Sekta(models.Model):
 class Nickname(models.Model):
     sektant = models.ForeignKey(Sektant,on_delete=models.CASCADE)
     sekta = models.ForeignKey(Sekta,on_delete=models.CASCADE)
-    nickname = models.fields.CharField(max_length=50)
+    nickname = models.fields.BinaryField()
 
     def __str__(self):
-        return self.nickname
+        if self.sektant.dead == False:
+            return str(bytes(self.nickname))
+        else:
+            return (bytes(self.nickname)).decode('utf-8')
 
     class Meta:
         unique_together=['sektant','sekta']
