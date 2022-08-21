@@ -1,42 +1,26 @@
 package main
 
 import (
-	"io/ioutil"
 	"log"
 	"net"
+	"vacancies/vacancies"
+
+	"google.golang.org/grpc"
 )
-
-var (
-	logoImg, vacanciesImg []byte
-)
-
-func init() {
-	var err error
-	logoImg, err = ioutil.ReadFile("logo_img.txt")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	vacanciesImg, err = ioutil.ReadFile("vacancies_img.txt")
-	if err != nil {
-		log.Fatal(err)
-	}
-}
 
 func main() {
-	log.Print("Start server")
 
-	ln, err := net.Listen("tcp", ":8080")
+	listener, err := net.Listen("tcp", ":8080")
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("failed to listen: %v", err)
 	}
 
-	for {
-		conn, err := ln.Accept()
-		if err != nil {
-			log.Print(err)
-		}
-		go handle(conn)
-	}
+	var opts []grpc.ServerOption
 
+	grpcServer := grpc.NewServer(opts...)
+	vacancies.RegisterVacanciesServer(grpcServer, NewHandler())
+
+	log.Print("vacancies started ...")
+	err = grpcServer.Serve(listener)
+	log.Print(err)
 }

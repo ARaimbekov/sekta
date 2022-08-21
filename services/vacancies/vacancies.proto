@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package order;
+
+option go_package = "/vacancies";
+
+// protoc -I=proto --go-grpc_out=. --go_out=. proto/vacancies.proto
+
+service Vacancies {
+  rpc List (ListRequest) returns (ListResponse);
+  rpc Search (SearchRequest) returns (SearchResponse) ;
+  rpc Create (CreateRequest) returns (CreateResponse) ;
+  rpc Get (GetRequest) returns (GetResponse) ;
+}
+
+message Vacancy {
+    string name = 1;
+    int32 min_age = 2;
+}
+
+message ListRequest {}
+
+message ListResponse {
+    repeated Vacancy vacancies = 1;
+}
+
+
+message SearchRequest {
+    string name = 1;
+}
+
+message SearchResponse {
+    Vacancy vacancy = 1;
+}
+
+
+message CreateRequest {
+    string name = 1;
+    int32  min_age = 2;
+    string token =3;
+}
+
+message CreateResponse {}
+
+message GetRequest {
+    string name = 1;
+    int32  min_age = 2;
+}
+
+message GetResponse {
+    string token =3;
+}
