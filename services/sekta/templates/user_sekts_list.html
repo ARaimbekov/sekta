@@ -1,0 +1,29 @@
+{% extends "base_generic_authorized.html" %}
+
+<body>
+{% block content %}
+
+<h2>Created sects</h2>
+
+{% for sekta in user_sekts %}
+    <div class="sekta">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <a href="/sekta/{{ sekta.id }}"><h3 class="panel-title">{{ sekta.sektaname }}</h3></a>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+
+<h2>Followed sects</h2>
+{% for sekta in member_sekts %}
+    <div class="sekta">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <a href="/sekta/{{ sekta.id }}"><h3 class="panel-title">{{ sekta.sektaname }}</h3></a>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+{% endblock %}
+</body>

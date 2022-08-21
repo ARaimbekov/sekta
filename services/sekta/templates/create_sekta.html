@@ -1,0 +1,13 @@
+{% extends "base_generic_authorized.html" %}
+
+<body>
+{% block content %}
+<h2>Создание секты</h2>
+
+    <form method="POST" class="form-group">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success">Create</button>
+    </form>
+{% endblock %}
+</body>

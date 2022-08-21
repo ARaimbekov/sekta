@@ -1,0 +1,18 @@
+{% extends "base_generic_authorized.html" %}
+
+<body>
+{% block content %}
+<h2>If you want to invite Sektant, enter new True name for him</h2>
+
+{% for user in users %}
+    <div class="user">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">{{ user.username }}</h3><form action="invite_sektant"><input type="text" placeholder="True name" name="nickname" value=""><input type="hidden" name="sect" value={{ sekta.id }}><input type="hidden" name="user" value={{ user.id }}><button type="submit" class="btn btn-success">invite</button></form>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+<a href="/sekta/{{ sekta.id }}"><h3 class="panel-title">Back to sect</h3></a>
+{% endblock %}
+</body>
