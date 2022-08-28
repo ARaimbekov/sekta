@@ -5,6 +5,7 @@
 <h2>{{ sekta.sektaname }}</h2>
 
 <h3>Гуру: {{ sekta.creator }}</h3>
+<div>{{ sekta.description }}</div>
 <h3>Участники:</h3>
 {% for sektant,nickname in participants %}
     <li>{{ sektant.username }} True name: {{ nickname }}</li>

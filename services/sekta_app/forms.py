@@ -48,9 +48,9 @@ class SektaCreationForm(ModelForm):
 
     class Meta:
         model = Sekta
-        fields = ['sektaname']
+        fields = ['sektaname','description']
 
     def save(self, user):
-        sekta = Sekta(creator=user,sektaname=self.cleaned_data['sektaname'],private_key=token_bytes(16))
+        sekta = Sekta(creator=user,sektaname=self.cleaned_data['sektaname'],description=self.cleaned_data['description'],private_key=token_bytes(16))
         sekta.save()
         return sekta

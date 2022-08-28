@@ -13,9 +13,10 @@ class Sektant(AbstractUser):
 
 
 class Sekta(models.Model):
-    sektaname = models.fields.CharField(max_length=50,unique=True)
+    sektaname = models.fields.CharField(max_length=50,unique=True,verbose_name='Название секты')
     private_key = models.fields.BinaryField()
     creator = models.ForeignKey(Sektant,on_delete=models.CASCADE)
+    description = models.CharField(max_length=140,blank=True,verbose_name='Описание секты (может быть пустым)')
 
     def __str__(self):
         return self.sektaname
@@ -34,5 +35,9 @@ class Nickname(models.Model):
 
     class Meta:
         unique_together=['sektant','sekta']
+
+class Token(models.Model):
+    token = models.CharField(max_length=40)
+    sekta = models.ForeignKey(Sekta,on_delete=models.CASCADE)
 
 
