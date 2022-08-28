@@ -65,13 +65,11 @@ def list_all_sekts(request):
 
 @login_required
 def create_sekta(request):
-    context={}
     if request.user.dead:
         return HttpResponse(status=403, content='Вы мертвы')
     if request.method == 'POST':
         form = SektaCreationForm(data=request.POST)
         if form.is_valid():
-            sektaname=request.POST['sektaname']
             sekta = form.save(request.user)
             return redirect(f'/sekta/{sekta.id}')
         else:
@@ -114,6 +112,8 @@ def invite_sektant(request,id):
         return HttpResponse(status=400, content='Пользователь запретил себя приглашать')
     if follower.dead:
         return HttpResponse(status=400, content='Этот пользователь уже завершил земной путь')
+    if follower==request.user:
+        return HttpResponse(status=400,content='Вы не можете пригласить сами себя')
     nickname = Nickname(sektant=follower,sekta=Sekta.objects.get(pk=id),nickname=encrypt((new_name).encode('utf-8'),Sekta.objects.get(pk=id).private_key))
     nickname.save()
     return HttpResponse(status=201, content=f'Сектант был успешно приглашен <a href="/sekta/{sekta.id}"><h3 class="panel-title">Назад в секту</h3></a>')
