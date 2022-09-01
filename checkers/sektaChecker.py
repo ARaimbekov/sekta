@@ -8,10 +8,17 @@ import lorem
 
 
 def getCSRF(resp: requests.Response) -> str:
-    return re.findall(r'value="([A-z0-9]+)">', resp.text)[0]
+    matches = re.findall(r'value="([A-z0-9]+)">', resp.text)
+
+    if len(matches) == 0:
+        die(Status.MUMBLE, "getting CSRF failed")
+
+    return matches[0]
 
 
-def dieHttp(self, resp: requests.Response, requestName: str):
+def checkHttpCode(resp: requests.Response, requestName: str):
+    if 200 <= resp.status_code < 300:
+        return
     if 500 <= resp.status_code:
         die(Status.DOWN, f"status code 5xx on {requestName}", resp.text)
     elif 400 <= resp.status_code < 500:
@@ -40,6 +47,8 @@ class SektaChecker:
         dummy.register()
         dummy.login()
 
+        master.invite(dummy.Id)
+
 
 class Sektant:
     def __init__(self, host: str, name: str):
@@ -65,9 +74,7 @@ class Sektant:
             resp = self.s.get(self.Host+"/register")
         except Exception as e:
             die(Status.DOWN, "get:register failed", str(e))
-
-        if resp.status_code != 200:
-            dieHttp(resp, "get:register")
+        checkHttpCode(resp, "get:register")
 
         csrf = getCSRF(resp)
 
@@ -83,9 +90,7 @@ class Sektant:
             ))
         except Exception as e:
             die(Status.DOWN, "post:register failed", str(e))
-
-        if resp.status_code != 200:
-            dieHttp(resp, "get:register")
+        checkHttpCode(resp, "get:register")
 
     def login(self):
         log(f"[{self.debugName}] run")
@@ -94,9 +99,7 @@ class Sektant:
             resp = self.s.get(self.Host+"/login")
         except Exception as e:
             die(Status.DOWN, "get:login failed", str(e))
-
-        if resp.status_code != 200:
-            dieHttp(resp, "get:login")
+        checkHttpCode(resp, "get:login")
 
         csrf = getCSRF(resp)
 
@@ -119,7 +122,7 @@ class Sektant:
                 self.Password,
                 resp.text)
 
-        self.userId = int(matches[0])
+        self.Id = int(matches[0])
 
     def createSekta(self):
         log(f"[{self.debugName}] run")
@@ -128,9 +131,7 @@ class Sektant:
             resp = self.s.get(self.Host+"/create_sekta")
         except Exception as e:
             die(Status.DOWN, "get:create_sekta failed", str(e))
-
-        if resp.status_code != 200:
-            dieHttp(resp, "get:create_sekta")
+        checkHttpCode(resp, "get:create_sekta")
 
         csrf = getCSRF(resp)
 
@@ -142,9 +143,7 @@ class Sektant:
                 sektaname=self.SektaName))
         except Exception as e:
             die(Status.DOWN, "post:create_sekta failed", str(e))
-
-        if resp.status_code != 200:
-            dieHttp(resp, "post:create_sekta")
+        checkHttpCode(resp, "post:create_sekta")
 
         matches = re.findall(
             r'([0-9]+)/invite\'">Invite new followers', resp.text)
@@ -153,3 +152,27 @@ class Sektant:
             die(Status.MUMBLE, "post:create_sekta getting id failed")
 
         self.SektaId = int(matches[0])
+
+    def invite(self, userId: int):
+        log(f"[{self.debugName}] run")
+
+        if self.SektaId == None:
+            die(Status.MUMBLE, "post:invite_to_sekta user doesnt have own sekta")
+
+        try:
+            resp = self.s.get(self.Host+"/invite")
+        except Exception as e:
+            die(Status.DOWN, "get:invite failed", str(e))
+        checkHttpCode(resp, "get:invite")
+
+        csrf = getCSRF(resp)
+
+        try:
+            resp = self.s.post(self.Host+"/invite_sektant", data=dict(
+                csrfmiddlewaretoken=csrf,
+                nickname=self.SektaName,
+                sect=self.SektaId,
+                user=userId))
+        except Exception as e:
+            die(Status.DOWN, "post:invite_sektant failed", str(e))
+        checkHttpCode(resp, "post:invite_sektant")
