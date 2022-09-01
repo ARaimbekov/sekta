@@ -11,15 +11,16 @@ import lorem
 
 class VacancyChecker:
 
-    def __init__(self, host: str):
-        host = "localhost:8033"
-        channel = grpc.insecure_channel(host)
-        self.stub = vacancies_pb2_grpc.VacanciesStub(channel)
+    def __init__(self, host: str, port: int):
+        self.Host = f"{host}:{port}"
         self.nameGen = lorem.sentence(count=1, comma=(0, 2), word_range=(3, 5))
         self.descriptionGen = lorem.sentence(
             count=1, comma=(0, 2), word_range=(6, 12))
 
     def check(self):
+        channel = grpc.insecure_channel(self.Host)
+        self.stub = vacancies_pb2_grpc.VacanciesStub(channel)
+
         log("run")
         self.vacancy = self.checkCreate()
         self.checkList()

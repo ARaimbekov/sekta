@@ -28,6 +28,8 @@ def log(obj):
 
 
 def die(code: Status, *msg: str):
+    print(code, file=sys.stderr, flush=True)
+
     for m in msg:
         print(m, file=sys.stderr, flush=True)
     exit(code.value)

@@ -28,7 +28,8 @@ class UserLoginForm(AuthenticationForm):
 class RegisterForm(ModelForm):
     username = forms.CharField(
         max_length=100, widget=forms.TextInput(attrs={'placeholder': 'логин'}))
-    password = forms.CharField(widget=PasswordInput(attrs={'placeholder': 'пароль'}))
+    password = forms.CharField(
+        widget=PasswordInput(attrs={'placeholder': 'пароль'}))
     can_be_invited = forms.BooleanField(required=False)
 
     class Meta:
@@ -51,6 +52,7 @@ class SektaCreationForm(ModelForm):
         fields = ['sektaname']
 
     def save(self, user):
-        sekta = Sekta(creator=user,sektaname=self.cleaned_data['sektaname'],private_key=token_bytes(16))
+        sekta = Sekta(
+            creator=user, sektaname=self.cleaned_data['sektaname'], private_key=token_bytes(16))
         sekta.save()
         return sekta

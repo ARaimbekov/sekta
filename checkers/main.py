@@ -5,10 +5,11 @@ import sys
 import traceback
 
 from common import Status, die, log
+from sektaChecker import SektaChecker
 from vacancyChecker import VacancyChecker
 
 
-MAIN_PORT = 8083
+SEKTA_PORT = 8000
 VACANCY_PORT = 8033
 
 
@@ -17,14 +18,11 @@ class Checker():
     def __init__(self):
         self.action, host, *args = sys.argv[1:]
 
-        if not host.startswith("http"):
-            self.mainHost = f"http://{host}:{MAIN_PORT}/"
-            self.vacancyHost = f"http://{host}:{VACANCY_PORT}/"
-
         if self.action != "check":
             self.flag_id, self.flag, self.vuln = args
 
-        self.vacancyChecker = VacancyChecker(self.vacancyHost)
+        self.sektaChecker = SektaChecker(host, SEKTA_PORT)
+        self.vacancyChecker = VacancyChecker(host, VACANCY_PORT)
 
     def main(self):
         try:
@@ -43,14 +41,15 @@ class Checker():
             die(Status.CHECKER_ERROR, e)
 
     def check(self):
-        log(f"Running CHECK on {self.mainHost} {self.vacancyHost}")
-        self.vacancyChecker.check()
+        log(f"Running CHECK on {self.sektaChecker.Host}")
+        self.sektaChecker.check()
+        # self.vacancyChecker.check()
 
     def put(self):
-        log(f"Running PUT on {self.mainHost} {self.vacancyHost} with {self.flag_id}:{self.flag}")
+        log(f"Running PUT on {self.sektaHost} {self.vacancyHost} with {self.flag_id}:{self.flag}")
 
     def get(self):
-        log(f"Running GET on {self.mainHost} {self.vacancyHost} with {self.flag_id}:{self.flag}")
+        log(f"Running GET on {self.sektaHost} {self.vacancyHost} with {self.flag_id}:{self.flag}")
         die(Status.OK, "Not implemented")
 
 
