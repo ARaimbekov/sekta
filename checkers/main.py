@@ -4,10 +4,10 @@
 import sys
 import traceback
 
-from common import Status, die, log
+from common import CheckerException, Status, die, log
 from sektaChecker import SektaChecker
 from vacancyChecker import VacancyChecker
-
+import requests
 
 SEKTA_PORT = 8000
 VACANCY_PORT = 8033
@@ -34,7 +34,16 @@ class Checker():
                 self.get()
             else:
                 message = f"Usage: {sys.argv[0]} check|put|get IP FLAGID FLAG"
-                die(Status.CHECKER_ERROR, message)
+                raise CheckerException(Status.CHECKER_ERROR, message)
+
+        except CheckerException as exception:
+            print(exception, file=sys.stderr, flush=True)
+            exit(code=exception.Status.value)
+
+        except requests.exceptions.ConnectionError as e:
+            print(f"{e.request.method} {e.request.url}\n" +
+                  str(e), file=sys.stderr, flush=True)
+            exit(code=Status.DOWN)
 
         except Exception as e:
             message = f"Exception: {e}\nStack:\n {traceback.format_exc()}",

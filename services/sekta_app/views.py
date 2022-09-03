@@ -57,7 +57,8 @@ def list_user_sekts(request):
     member_sekts = [
         nickname.sekta for nickname in Nickname.objects.filter(sektant=request.user)]
     context = {'user_sekts': user_sekts,
-               'member_sekts': member_sekts, 'user': request.user}
+               'member_sekts': member_sekts,
+               'user': request.user}
     return render(request, 'user_sekts_list.html', context)
 
 
