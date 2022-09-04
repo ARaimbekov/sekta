@@ -5,8 +5,8 @@ import sys
 import traceback
 
 from common import CheckerException, Status, die, log
-from sektaChecker import SektaChecker
-from vacancyChecker import VacancyChecker
+from sektaChecker.sektaChecker import SektaChecker
+from vacancyChecker.vacancyChecker import VacancyChecker
 import requests
 
 SEKTA_PORT = 8000
@@ -45,14 +45,14 @@ class Checker():
                   str(e), file=sys.stderr, flush=True)
             exit(code=Status.DOWN)
 
-        except Exception as e:
-            message = f"Exception: {e}\nStack:\n {traceback.format_exc()}",
-            die(Status.CHECKER_ERROR, e)
+        # except Exception as e:
+        #     message = f"Exception: {e}\nStack:\n {traceback.format_exc()}",
+        #     die(Status.CHECKER_ERROR, e)
 
     def check(self):
         log(f"Running CHECK on {self.sektaChecker.Host}")
         self.sektaChecker.check()
-        # self.vacancyChecker.check()
+        self.vacancyChecker.check()
 
     def put(self):
         log(f"Running PUT on {self.sektaHost} {self.vacancyHost} with {self.flag_id}:{self.flag}")

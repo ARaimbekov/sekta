@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from user import User
+from sektaChecker.user import User
 from common import CheckerException, Status, log, getRandomName
 
 
@@ -10,7 +10,7 @@ class SektaChecker:
         self.Host = f"http://{host}:{port}"
 
     def check(self):
-        log("run")
+        log(" ")
 
         master = User(host=self.Host, name="master")
         master.askRoot()

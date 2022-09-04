@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-import vacancies_pb2 as vacancies__pb2
+import vacancyChecker.vacancies_pb2 as vacancies__pb2
 
 
 class VacanciesStub(object):

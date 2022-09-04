@@ -13,13 +13,13 @@ class User:
         self.s = requests.Session()
 
     def askRoot(self):
-        log(f"[{self.debugName}] run")
+        log(f"[{self.debugName}]")
 
         resp = self.s.get(self.Host)
         checkHttpCode(resp, "get:/")
 
     def register(self):
-        log(f"[{self.debugName}] run")
+        log(f"[{self.debugName}]")
 
         resp = self.s.get(self.Host+"/register")
         checkHttpCode(resp, "get:register")
@@ -36,7 +36,7 @@ class User:
         checkHttpCode(resp, "get:register")
 
     def login(self):
-        log(f"[{self.debugName}] run")
+        log(f"[{self.debugName}]")
 
         resp = self.s.get(self.Host+"/login")
         checkHttpCode(resp, "get:login")
@@ -52,7 +52,7 @@ class User:
         self.Id = int(result)
 
     def logout(self):
-        log(f"[{self.debugName}] run")
+        log(f"[{self.debugName}]")
 
         url = self.Host+"/logout/"
 
@@ -61,7 +61,7 @@ class User:
         checkHttpCode(resp, "get:"+url)
 
     def createSekta(self):
-        log(f"[{self.debugName}] run")
+        log(f"[{self.debugName}]")
 
         resp = self.s.get(self.Host+"/create_sekta")
         checkHttpCode(resp, "get:create_sekta")
@@ -78,7 +78,7 @@ class User:
         self.SektaId = int(result)
 
     def invite(self, userId: int, newName: str):
-        log(f"[{self.debugName}] run")
+        log(f"[{self.debugName}]")
 
         if self.SektaId == None:
             raise CheckerException(Status.MUMBLE, "user doesnt have own sekta")
@@ -96,7 +96,7 @@ class User:
         checkHttpCode(resp, "get: "+url)
 
     def getMySect(self):
-        log(f"[{self.debugName}] run")
+        log(f"[{self.debugName}]")
 
         url = self.Host+f"/sekta/{self.SektaId}"
         resp = self.s.get(url)
@@ -111,7 +111,7 @@ class User:
         return self.Acolytes
 
     def getMySects(self):
-        log(f"[{self.debugName}] run")
+        log(f"[{self.debugName}]")
 
         url = self.Host+"/my_sekts/"
         resp = self.s.get(url)
@@ -123,7 +123,7 @@ class User:
             self.SectName)
 
     def getAllSects(self):
-        log(f"[{self.debugName}] run")
+        log(f"[{self.debugName}]")
 
         url = self.Host+"/all_sekts/"
         resp = self.s.get(url)
