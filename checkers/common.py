@@ -88,14 +88,16 @@ def findExpected(text: str, pattern: str, expected: str):
     match = re.search(pattern, text)
 
     if match == None:
-        raise CheckerException(
-            Status.MUMBLE, f"pattern '{pattern}' not found in text")
+        raise CheckerException(Status.MUMBLE,
+                               f"pattern '{pattern}' not found in text",
+                               text)
 
     if match[1] != expected:
         raise CheckerException(Status.MUMBLE,
                                "finding expected in received text failed",
                                f"Expected: {expected}",
-                               f"Received: {match[1]}")
+                               f"Received: {match[1]}",
+                               text)
 
 
 def findExpectedInMany(text: str, pattern: str, expected: str):
@@ -108,4 +110,5 @@ def findExpectedInMany(text: str, pattern: str, expected: str):
     raise CheckerException(Status.MUMBLE,
                            "finding expected in received text failed",
                            f"Expected: {expected}",
-                           f"Received: {matches}")
+                           f"Received: {matches}",
+                           text)

@@ -28,8 +28,8 @@ class SektaChecker:
         dummy2.register()
         dummy2.login()
 
-        dummySecretName = getRandomName()
-        dummy2SecretName = getRandomName()
+        dummySecretName = "DYMMY"+getRandomName()
+        dummy2SecretName = "DYMMY2"+getRandomName()
 
         master.invite(dummy.Id, dummySecretName)
         master.invite(dummy2.Id,  dummy2SecretName)
@@ -47,11 +47,19 @@ class SektaChecker:
         self.checkAcolyteIsDead(dummy, dummySecretName, acolytes)
         self.checkAcolyteIsDead(dummy2, dummy2SecretName, acolytes)
 
+        master.logout()
+
+        try:
+            master.getMySects()
+            raise CheckerException(Status.MUMBLE, "logout doesnt worked")
+        except CheckerException as e:
+            if e.Status != Status.MUMBLE:
+                raise e
+
     def checkAcolyteInSect(self, acolyte: User, acolytes: list):
 
         for a in acolytes:
-            sectName = a[0]
-            if acolyte.Name == sectName:
+            if acolyte.Name == a[0]:
                 return
 
         raise CheckerException(
@@ -59,8 +67,7 @@ class SektaChecker:
 
     def checkAcolyteIsDead(self, acolyte: User, secretName: str, acolytes: list):
         for a in acolytes:
-            sectSecretName = a[1]
-            if secretName in sectSecretName:
+            if secretName in a[1]:
                 return
 
         raise CheckerException(

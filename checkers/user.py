@@ -51,6 +51,15 @@ class User:
         result = find(r'Добро пожаловать, (\d+)\.[0-9A-z]+!</h3>', resp.text)
         self.Id = int(result)
 
+    def logout(self):
+        log(f"[{self.debugName}] run")
+
+        url = self.Host+"/logout/"
+
+        resp = self.s.get(url)
+
+        checkHttpCode(resp, "get:"+url)
+
     def createSekta(self):
         log(f"[{self.debugName}] run")
 
