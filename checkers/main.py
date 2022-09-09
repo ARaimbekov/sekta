@@ -3,7 +3,7 @@
 
 import sys
 
-from common import CheckerException, Status, die, log
+from common import CheckerException, Status, die, genFlag, log
 from sektaChecker.sektaChecker import SektaChecker
 from vacancyChecker.vacancyChecker import VacancyChecker
 import requests
@@ -55,7 +55,7 @@ class Checker():
 
     def put(self):
         log(f"Running PUT on {self.sektaChecker.Host}")
-        self.sektaChecker.Put(self.flag_id, self.flag)
+        self.sektaChecker.Put(self.flag_id, genFlag())
 
     def get(self):
         log(f"Running GET on {self.sektaHost} {self.vacancyHost} with {self.flag_id}:{self.flag}")

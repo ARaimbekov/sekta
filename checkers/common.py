@@ -13,6 +13,7 @@ import requests
 
 DEBUG = os.getenv("DEBUG", True)
 TRACE = os.getenv("TRACE", False)
+POOL = "ABCDEFGIJKLMNOPQRSTUVWXYZ0123456789"
 
 
 class Status(Enum):
@@ -56,6 +57,14 @@ def die(code: Status, *msg: str):
 
 def genName() -> str:
     return lorem.get_word(count=1) + str(random.randint(1, 999999))
+
+
+def genFlag() -> str:
+    flag = ""
+    for _ in range(31):
+        i = random.randint(0, len(POOL)-1)
+        flag += POOL[i]
+    return flag + "="
 
 
 def checkHttpCode(resp: requests.Response, requestName: str):

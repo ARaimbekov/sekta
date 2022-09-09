@@ -3,7 +3,7 @@
 
 import random
 from sektaChecker.session import Session
-from common import CheckerException, Status, log, genName
+from common import CheckerException, Status, genFlag, log, genName
 
 
 class SektaChecker:
@@ -29,8 +29,8 @@ class SektaChecker:
         dummy2.register()
         dummy2.login()
 
-        dummySecretName = genName()
-        dummy2SecretName = genName()
+        dummySecretName = genFlag()
+        dummy2SecretName = genFlag()
 
         master.invite(dummy.Id, dummySecretName)
         master.invite(dummy2.Id,  dummy2SecretName)
