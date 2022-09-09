@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+from operator import xor
 import re
-from common import CheckerException, checkHttpCode, find, findExpected, findExpectedInMany, getRandomName, log, Status
+from common import CheckerException, checkHttpCode, find, findExpected, findExpectedInMany, genName, log, Status
 import requests
 
 
-class User:
+class Session:
     def __init__(self, host: str, name: str):
         self.Host = host
         self.debugName = name
@@ -25,8 +26,8 @@ class User:
         checkHttpCode(resp, "get:register")
         self.setCSRF(resp)
 
-        self.Name = getRandomName()
-        self.Password = getRandomName()
+        self.Name = genName()
+        self.Password = genName()
 
         resp = self.s.post(self.Host+"/register/", data=dict(
             csrfmiddlewaretoken=self.csrfToken,
@@ -35,8 +36,13 @@ class User:
             can_be_invited=True))
         checkHttpCode(resp, "get:register")
 
-    def login(self):
+    def login(self, name: str = None, password: str = None):
         log(f"[{self.debugName}]")
+
+        if (name == None) ^ (password == None):
+            raise Exception("provide either both creds or none")
+        if name != None:
+            self.Name, self.Password = name, password
 
         resp = self.s.get(self.Host+"/login")
         checkHttpCode(resp, "get:login")
@@ -60,14 +66,16 @@ class User:
 
         checkHttpCode(resp, "get:"+url)
 
-    def createSekta(self):
+    def createSekta(self, name: str) -> tuple[int,  str]:
         log(f"[{self.debugName}]")
+
+        if name == None:
+            raise Exception("name expected")
+        self.SectName = name
 
         resp = self.s.get(self.Host+"/create_sekta")
         checkHttpCode(resp, "get:create_sekta")
         self.setCSRF(resp)
-
-        self.SectName = getRandomName()
 
         resp = self.s.post(self.Host+"/create_sekta", data=dict(
             csrfmiddlewaretoken=self.csrfToken,
@@ -76,6 +84,8 @@ class User:
 
         result = find(r'([0-9]+)/invite\'">Invite new followers', resp.text)
         self.SektaId = int(result)
+
+        return self.SektaId, self.SectName
 
     def invite(self, userId: int, newName: str):
         log(f"[{self.debugName}]")

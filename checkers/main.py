@@ -51,11 +51,12 @@ class Checker():
 
     def check(self):
         log(f"Running CHECK on {self.sektaChecker.Host}")
-        self.sektaChecker.check()
+        self.sektaChecker.Check()
         self.vacancyChecker.check()
 
     def put(self):
-        log(f"Running PUT on {self.sektaHost} {self.vacancyHost} with {self.flag_id}:{self.flag}")
+        log(f"Running PUT on {self.sektaChecker.Host}")
+        self.sektaChecker.Put(self.flag_id, self.flag)
 
     def get(self):
         log(f"Running GET on {self.sektaHost} {self.vacancyHost} with {self.flag_id}:{self.flag}")

@@ -54,7 +54,7 @@ def die(code: Status, *msg: str):
     exit(code.value)
 
 
-def getRandomName() -> str:
+def genName() -> str:
     return lorem.get_word(count=1) + str(random.randint(1, 999999))
 
 
