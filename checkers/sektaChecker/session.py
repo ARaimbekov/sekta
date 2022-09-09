@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from operator import xor
 import re
 from common import CheckerException, checkHttpCode, find, findExpected, findExpectedInMany, genName, log, Status
 import requests
@@ -83,32 +82,32 @@ class Session:
         checkHttpCode(resp, "post:create_sekta")
 
         result = find(r'([0-9]+)/invite\'">Invite new followers', resp.text)
-        self.SektaId = int(result)
+        self.SectId = int(result)
 
-        return self.SektaId, self.SectName
+        return self.SectId, self.SectName
 
     def invite(self, userId: int, newName: str):
         log(f"[{self.debugName}]")
 
-        if self.SektaId == None:
+        if self.SectId == None:
             raise CheckerException(Status.MUMBLE, "user doesnt have own sekta")
 
-        url = self.Host+f"/sekta/{self.SektaId}/invite"
+        url = self.Host+f"/sekta/{self.SectId}/invite"
         resp = self.s.get(url)
         checkHttpCode(resp, "get:"+url)
 
-        url = self.Host+f"/sekta/{self.SektaId}/invite_sektant"
+        url = self.Host+f"/sekta/{self.SectId}/invite_sektant"
         resp = self.s.get(url, params=dict(
             csrfmiddlewaretoken=self.csrfToken,
             nickname=newName,
-            sect=self.SektaId,
+            sect=self.SectId,
             user=str(userId)))
         checkHttpCode(resp, "get: "+url)
 
     def getMySect(self):
         log(f"[{self.debugName}]")
 
-        url = self.Host+f"/sekta/{self.SektaId}"
+        url = self.Host+f"/sekta/{self.SectId}"
         resp = self.s.get(url)
         checkHttpCode(resp, "get:"+url)
 
@@ -146,11 +145,11 @@ class Session:
                 self.SectName)
 
     def sacrifice(self, userId: int):
-        url = self.Host+f"/sekta/{self.SektaId}/sacrifice"
+        url = self.Host+f"/sekta/{self.SectId}/sacrifice"
         resp = self.s.get(url)
         checkHttpCode(resp, "get:"+url)
 
-        url = self.Host+f"/sekta/{self.SektaId}/sacrifice_sektant"
+        url = self.Host+f"/sekta/{self.SectId}/sacrifice_sektant"
         resp = self.s.get(url, params=dict(user=userId))
         checkHttpCode(resp, "get:"+url)
 

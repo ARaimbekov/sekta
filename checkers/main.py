@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import sys
-import traceback
 
 from common import CheckerException, Status, die, log
 from sektaChecker.sektaChecker import SektaChecker

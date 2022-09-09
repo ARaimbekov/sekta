@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import random
-from re import L
 from sektaChecker.session import Session
 from common import CheckerException, Status, log, genName
 
@@ -18,7 +17,7 @@ class SektaChecker:
         master.askRoot()
         master.register()
         master.login()
-        master.createSekta()
+        master.createSekta(genName())
 
         dummy = Session(host=self.Host, name="dummy")
         dummy.askRoot()
@@ -74,6 +73,8 @@ class SektaChecker:
             dummy.register()
             dummy.login()
             master.invite(dummy.Id, genName())
+
+        return master.SectName
 
     def Get(self, flagId: int, flag: str):
         pass
