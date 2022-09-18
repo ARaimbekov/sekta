@@ -71,7 +71,8 @@ def generate_flag(name):
 
 def colored_log(*messages, color: ColorType = ColorType.INFO):
     ts = datetime.utcnow().isoformat(sep=' ', timespec='milliseconds')
-    print(f'{color}{color.name} [{current_thread().name} {ts}]{ColorType.ENDC}', *messages)
+    print(
+        f'{color}{color.name} [{current_thread().name} {ts}]{ColorType.ENDC}', *messages)
 
 
 class BaseValidator:
@@ -153,7 +154,8 @@ class Checker(BaseValidator):
 
         start = time.monotonic()
         try:
-            p = subprocess.run(cmd, capture_output=True, check=False, env=env, timeout=self._timeout)
+            p = subprocess.run(cmd, capture_output=True,
+                               check=False, env=env, timeout=self._timeout)
         except subprocess.TimeoutExpired:
             pass
         elapsed = time.monotonic() - start
@@ -164,12 +166,14 @@ class Checker(BaseValidator):
         out_s = out.rstrip('\n')
         err_s = err.rstrip('\n')
 
-        self._log(f'action: {action}\ntime: {elapsed:.2f}s\nstdout:\n{out_s}\nstderr:\n{err_s}')
+        self._log(
+            f'action: {action}\ntime: {elapsed:.2f}s\nstdout:\n{out_s}\nstderr:\n{err_s}')
         self._fatal(
             p.returncode != 124,
             f'action {action}: bad return code: 124, probably {ColorType.BOLD}timeout{ColorType.ENDC}',
         )
-        self._fatal(p.returncode == 101, f'action {action}: bad return code: {p.returncode}')
+        self._fatal(p.returncode == 101,
+                    f'action {action}: bad return code: {p.returncode}')
         return out, err
 
     def check(self):
@@ -287,7 +291,8 @@ class StructureValidator(BaseValidator):
     def validate_file(self, f: Path):
         path = f.relative_to(BASE_DIR)
         self._error(f.suffix != '.yaml', f'file {path} has .yaml extension')
-        self._error(f.name != '.gitkeep', f'{path} found, should be named .keep')
+        self._error(f.name != '.gitkeep',
+                    f'{path} found, should be named .keep')
 
         if f.name == 'docker-compose.yml':
             with f.open() as file:
@@ -340,7 +345,8 @@ class StructureValidator(BaseValidator):
                     else:
                         context = build['context']
                         if 'dockerfile' in build:
-                            dockerfile = f.parent / context / build['dockerfile']
+                            dockerfile = f.parent / \
+                                context / build['dockerfile']
                         else:
                             dockerfile = f.parent / context / 'Dockerfile'
 
