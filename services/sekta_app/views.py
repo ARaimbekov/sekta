@@ -1,11 +1,14 @@
+from pickle import GET
+from tokenize import Token
+from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.core.paginator import Paginator
 
-from .forms import UserLoginForm, RegisterForm, SektaCreationForm
-from .models import Sektant, Sekta, Nickname
+from .forms import UserLoginForm, RegisterForm, SektaCreationForm, TokenInputForm
+from .models import Sektant, Sekta, Nickname, Token
 from .helpers import is_belong, encrypt, decrypt
 
 
@@ -74,23 +77,18 @@ def list_all_sekts(request):
 
 @login_required
 def create_sekta(request):
-
-    if request.method != 'POST':
-        form = SektaCreationForm()
-        return render(request, 'create_sekta.html', {'form': form, 'user': request.user})
-
     if request.user.dead:
         return HttpResponse(status=403, content='Вы мертвы')
-
-    form = SektaCreationForm(data=request.POST)
-
-    if not form.is_valid():
-        return HttpResponse(status=400, content='Секта с таким именем уже есть')
-
-    sektaname = request.POST['sektaname']
-    sekta = form.save(request.user)
-
-    return redirect(f'/sekta/{sekta.id}')
+    if request.method == 'POST':
+        form = SektaCreationForm(data=request.POST)
+        if form.is_valid():
+            sekta = form.save(request.user)
+            return redirect(f'/sekta/{sekta.id}')
+        else:
+            return HttpResponse(status=400,content='Секта с таким именем уже есть')
+    else:
+        form = SektaCreationForm()
+        return render(request,'create_sekta.html',{'form':form,'user':request.user})
 
 
 @login_required
@@ -130,6 +128,8 @@ def invite_sektant(request, id):
         return HttpResponse(status=400, content='Пользователь запретил себя приглашать')
     if follower.dead:
         return HttpResponse(status=400, content='Этот пользователь уже завершил земной путь')
+    if follower==request.user:
+        return HttpResponse(status=400,content='Вы не можете пригласить сами себя')
     nickname = Nickname(sektant=follower, sekta=Sekta.objects.get(pk=id), nickname=encrypt(
         (new_name).encode('utf-8'), Sekta.objects.get(pk=id).private_key))
     nickname.save()
@@ -197,3 +197,25 @@ def sacrifice_sektant(request, id):
         n.save()
     follower.save()
     return HttpResponse(status=201, content=f'Сектант был успешно принесён в жертву <a href="/sekta/{sekta.id}"><h3 class="panel-title">Назад в секту</h3></a>')
+
+@login_required
+def join_by_token(request):
+    if request.method=='GET':
+        form = TokenInputForm
+        return render(request, 'token_input.html', {'form':form})
+    else:
+        form = TokenInputForm(data=request.POST)
+        if form.is_valid():
+            token = form.cleaned_data['token']
+            sekta = form.cleaned_data['sekta']
+
+        if len(Token.objects.filter(Q(token=token) & Q(sekta=sekta))):
+            if not len(Nickname.objects.filter(Q(sekta=sekta) & Q(sektant=request.user))):
+                form.save(request.user)
+                return redirect(f'/sekta/{sekta.id}')
+            else:
+                return HttpResponse(status=400, content='Вы уже состоите в данной секте')
+        else:
+            return HttpResponse(status=400, content='Токен не подходит')
+
+
