@@ -1,0 +1,14 @@
+{% extends "base_generic_authorized.html" %}
+
+<body>
+    {% block content %}
+    <h3>Вы можете вступить в чужую секту сами и выбрать себе новое имя, но только если у вас есть секретный пригласительный токен секты</h3>
+    <div class="panel panel-default">
+        <form method="POST" class="form-group">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-success">Join</button>
+        </form>
+    </div>
+    {% endblock %}
+</body>

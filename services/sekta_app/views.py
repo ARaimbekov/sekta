@@ -1,11 +1,14 @@
+from pickle import GET
+from tokenize import Token
+from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.paginator import Paginator
 
-from .forms import UserLoginForm, RegisterForm, SektaCreationForm
-from .models import Sektant, Sekta, Nickname
+from .forms import UserLoginForm, RegisterForm, SektaCreationForm, TokenInputForm
+from .models import Sektant, Sekta, Nickname, Token
 from .helpers import is_belong, encrypt, decrypt
 
 
@@ -176,4 +179,27 @@ def sacrifice_sektant(request,id):
         n.save()
     follower.save()
     return HttpResponse(status=201, content=f'Сектант был успешно принесён в жертву <a href="/sekta/{sekta.id}"><h3 class="panel-title">Назад в секту</h3></a>')
+
+@login_required
+def join_by_token(request):
+    if request.method=='GET':
+        form = TokenInputForm
+        return render(request, 'token_input.html', {'form':form})
+    else:
+        form = TokenInputForm(data=request.POST)
+        if form.is_valid():
+            token = form.cleaned_data['token']
+            sekta = form.cleaned_data['sekta']
+
+        if len(Token.objects.filter(Q(token=token) & Q(sekta=sekta))):
+            if not len(Nickname.objects.filter(Q(sekta=sekta) & Q(sektant=request.user))):
+                form.save(request.user)
+                return redirect(f'/sekta/{sekta.id}')
+            else:
+                return HttpResponse(status=400, content='Вы уже состоите в данной секте')
+        else:
+            return HttpResponse(status=400, content='Токен не подходит')
+
+
+            
 
