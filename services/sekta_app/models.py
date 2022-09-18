@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractUser
 
 
 class Sektant(AbstractUser):
-    username = models.fields.CharField(max_length=50,unique=True)
+    username = models.fields.CharField(max_length=50, unique=True)
     password = models.fields.CharField(max_length=128)
     dead = models.fields.BooleanField(default=False)
     can_be_invited = models.fields.BooleanField(default=True)
@@ -18,13 +18,14 @@ class Sekta(models.Model):
     creator = models.ForeignKey(Sektant,on_delete=models.CASCADE)
     description = models.CharField(max_length=140,blank=True,verbose_name='Описание секты (может быть пустым)')
 
+
     def __str__(self):
         return self.sektaname
 
 
 class Nickname(models.Model):
-    sektant = models.ForeignKey(Sektant,on_delete=models.CASCADE)
-    sekta = models.ForeignKey(Sekta,on_delete=models.CASCADE)
+    sektant = models.ForeignKey(Sektant, on_delete=models.CASCADE)
+    sekta = models.ForeignKey(Sekta, on_delete=models.CASCADE)
     nickname = models.fields.BinaryField()
 
     def __str__(self):
@@ -39,5 +40,4 @@ class Nickname(models.Model):
 class Token(models.Model):
     token = models.CharField(max_length=40)
     sekta = models.ForeignKey(Sekta,on_delete=models.CASCADE)
-
 

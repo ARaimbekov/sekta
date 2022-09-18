@@ -15,7 +15,7 @@ var (
 	errInternal = status.Error(codes.Internal, "internal error")
 
 	errNotFound   = errors.New("vacancy not found or not activated")
-	ErrWrongToken = errors.New("vacancy not found or token is invalid")
+	ErrWrongToken = errors.New("invalid token")
 	knownErrors   = []error{errNotFound, ErrWrongToken}
 )
 

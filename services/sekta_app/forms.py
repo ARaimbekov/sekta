@@ -30,7 +30,8 @@ class UserLoginForm(AuthenticationForm):
 class RegisterForm(ModelForm):
     username = forms.CharField(
         max_length=100, widget=forms.TextInput(attrs={'placeholder': 'логин'}))
-    password = forms.CharField(widget=PasswordInput(attrs={'placeholder': 'пароль'}))
+    password = forms.CharField(
+        widget=PasswordInput(attrs={'placeholder': 'пароль'}))
     can_be_invited = forms.BooleanField(required=False)
 
     class Meta:

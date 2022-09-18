@@ -3,24 +3,25 @@
 
 import uuid
 import grpc
-import vacancies_pb2_grpc
-import vacancies_pb2
+import vacancyChecker.vacancies_pb2_grpc as v_grpc
+import vacancyChecker.vacancies_pb2 as v
 from common import log, die, Status
 import lorem
 
 
 class VacancyChecker:
 
-    def __init__(self, host: str):
-        host = "localhost:8033"
-        channel = grpc.insecure_channel(host)
-        self.stub = vacancies_pb2_grpc.VacanciesStub(channel)
+    def __init__(self, host: str, port: int):
+        self.Host = f"{host}:{port}"
         self.nameGen = lorem.sentence(count=1, comma=(0, 2), word_range=(3, 5))
         self.descriptionGen = lorem.sentence(
             count=1, comma=(0, 2), word_range=(6, 12))
 
     def check(self):
-        log("run")
+        channel = grpc.insecure_channel(self.Host)
+        self.stub = v_grpc.VacanciesStub(channel)
+
+        log(" ")
         self.vacancy = self.checkCreate()
         self.checkList()
         self.checkFailGet()
@@ -28,9 +29,9 @@ class VacancyChecker:
         self.checkGet()
 
     def checkCreate(self):
-        log("run")
+        log(" ")
 
-        req = vacancies_pb2.CreateRequest(
+        req = v.CreateRequest(
             name=next(self.nameGen),
             description=next(self.descriptionGen),
             token=str(uuid.uuid4()),
@@ -52,10 +53,10 @@ class VacancyChecker:
         return vacancy
 
     def checkList(self):
-        log("run")
+        log(" ")
 
         try:
-            resp = self.stub.List(vacancies_pb2.ListRequest())
+            resp = self.stub.List(v.ListRequest())
         except Exception as exception:
             die(Status.DOWN, "requesting List failed", str(exception))
 
@@ -77,19 +78,19 @@ class VacancyChecker:
             die(Status.MUMBLE, "field 'is_active' expected")
 
     def checkFailGet(self):
-        log("run")
+        log(" ")
 
         try:
-            self.stub.Get(vacancies_pb2.GetRequest(id=self.vacancy.id))
+            self.stub.Get(v.GetRequest(id=self.vacancy.id))
             die(Status.MUMBLE, "request expected to fail")
         except Exception as exception:
             if "vacancy not found or not activated" not in str(exception):
                 die(Status.DOWN, "requesting Get failed", str(exception))
 
     def checkEdit(self):
-        log("run")
+        log(" ")
 
-        req = vacancies_pb2.Vacancy(
+        req = v.Vacancy(
             id=self.vacancy.id,
             name=self.vacancy.name,
             description=next(self.descriptionGen),
@@ -112,9 +113,9 @@ class VacancyChecker:
         return vacancy
 
     def checkGet(self):
-        log("run")
+        log(" ")
 
-        req = vacancies_pb2.GetRequest(id=self.vacancy.id)
+        req = v.GetRequest(id=self.vacancy.id)
         try:
             vacancy = self.stub.Get(req)
         except Exception as exception:
