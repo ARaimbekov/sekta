@@ -65,5 +65,5 @@ class TokenInputForm(ModelForm):
 
     def save(self,user):
         sekta=self.cleaned_data['sekta']
-        nickname = Nickname(sekta,sektant=user,nickname=encrypt((self.cleaned_data['nickname']).encode('utf-8'),sekta.private_key))
+        nickname = Nickname(sekta=sekta,sektant=user,nickname=encrypt((self.cleaned_data['nickname']).encode('utf-8'),sekta.private_key))
         nickname.save()
