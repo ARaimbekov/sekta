@@ -2,9 +2,9 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v3.12.4
-// source: vacancies.proto
+// source: vacancy.proto
 
-package vacancies
+package protobuf
 
 import (
 	context "context"
@@ -22,9 +22,9 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type VacanciesClient interface {
+	Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*Vacancy, error)
 	List(ctx context.Context, in *ListRequest, opts ...grpc.CallOption) (*ListResponse, error)
 	Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*Vacancy, error)
-	Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*Vacancy, error)
 	Edit(ctx context.Context, in *Vacancy, opts ...grpc.CallOption) (*Vacancy, error)
 }
 
@@ -36,9 +36,18 @@ func NewVacanciesClient(cc grpc.ClientConnInterface) VacanciesClient {
 	return &vacanciesClient{cc}
 }
 
+func (c *vacanciesClient) Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*Vacancy, error) {
+	out := new(Vacancy)
+	err := c.cc.Invoke(ctx, "/vacancy.Vacancies/Create", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *vacanciesClient) List(ctx context.Context, in *ListRequest, opts ...grpc.CallOption) (*ListResponse, error) {
 	out := new(ListResponse)
-	err := c.cc.Invoke(ctx, "/vacancies.Vacancies/List", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/vacancy.Vacancies/List", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -47,16 +56,7 @@ func (c *vacanciesClient) List(ctx context.Context, in *ListRequest, opts ...grp
 
 func (c *vacanciesClient) Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*Vacancy, error) {
 	out := new(Vacancy)
-	err := c.cc.Invoke(ctx, "/vacancies.Vacancies/Get", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *vacanciesClient) Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*Vacancy, error) {
-	out := new(Vacancy)
-	err := c.cc.Invoke(ctx, "/vacancies.Vacancies/Create", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/vacancy.Vacancies/Get", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +65,7 @@ func (c *vacanciesClient) Create(ctx context.Context, in *CreateRequest, opts ..
 
 func (c *vacanciesClient) Edit(ctx context.Context, in *Vacancy, opts ...grpc.CallOption) (*Vacancy, error) {
 	out := new(Vacancy)
-	err := c.cc.Invoke(ctx, "/vacancies.Vacancies/Edit", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/vacancy.Vacancies/Edit", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -76,9 +76,9 @@ func (c *vacanciesClient) Edit(ctx context.Context, in *Vacancy, opts ...grpc.Ca
 // All implementations must embed UnimplementedVacanciesServer
 // for forward compatibility
 type VacanciesServer interface {
+	Create(context.Context, *CreateRequest) (*Vacancy, error)
 	List(context.Context, *ListRequest) (*ListResponse, error)
 	Get(context.Context, *GetRequest) (*Vacancy, error)
-	Create(context.Context, *CreateRequest) (*Vacancy, error)
 	Edit(context.Context, *Vacancy) (*Vacancy, error)
 	mustEmbedUnimplementedVacanciesServer()
 }
@@ -87,14 +87,14 @@ type VacanciesServer interface {
 type UnimplementedVacanciesServer struct {
 }
 
+func (UnimplementedVacanciesServer) Create(context.Context, *CreateRequest) (*Vacancy, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
+}
 func (UnimplementedVacanciesServer) List(context.Context, *ListRequest) (*ListResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method List not implemented")
 }
 func (UnimplementedVacanciesServer) Get(context.Context, *GetRequest) (*Vacancy, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
-}
-func (UnimplementedVacanciesServer) Create(context.Context, *CreateRequest) (*Vacancy, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
 }
 func (UnimplementedVacanciesServer) Edit(context.Context, *Vacancy) (*Vacancy, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Edit not implemented")
@@ -112,6 +112,24 @@ func RegisterVacanciesServer(s grpc.ServiceRegistrar, srv VacanciesServer) {
 	s.RegisterService(&Vacancies_ServiceDesc, srv)
 }
 
+func _Vacancies_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(VacanciesServer).Create(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/vacancy.Vacancies/Create",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(VacanciesServer).Create(ctx, req.(*CreateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Vacancies_List_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListRequest)
 	if err := dec(in); err != nil {
@@ -122,7 +140,7 @@ func _Vacancies_List_Handler(srv interface{}, ctx context.Context, dec func(inte
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/vacancies.Vacancies/List",
+		FullMethod: "/vacancy.Vacancies/List",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(VacanciesServer).List(ctx, req.(*ListRequest))
@@ -140,28 +158,10 @@ func _Vacancies_Get_Handler(srv interface{}, ctx context.Context, dec func(inter
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/vacancies.Vacancies/Get",
+		FullMethod: "/vacancy.Vacancies/Get",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(VacanciesServer).Get(ctx, req.(*GetRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Vacancies_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(VacanciesServer).Create(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/vacancies.Vacancies/Create",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(VacanciesServer).Create(ctx, req.(*CreateRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -176,7 +176,7 @@ func _Vacancies_Edit_Handler(srv interface{}, ctx context.Context, dec func(inte
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/vacancies.Vacancies/Edit",
+		FullMethod: "/vacancy.Vacancies/Edit",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(VacanciesServer).Edit(ctx, req.(*Vacancy))
@@ -188,9 +188,13 @@ func _Vacancies_Edit_Handler(srv interface{}, ctx context.Context, dec func(inte
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Vacancies_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "vacancies.Vacancies",
+	ServiceName: "vacancy.Vacancies",
 	HandlerType: (*VacanciesServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Create",
+			Handler:    _Vacancies_Create_Handler,
+		},
 		{
 			MethodName: "List",
 			Handler:    _Vacancies_List_Handler,
@@ -200,14 +204,10 @@ var Vacancies_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Vacancies_Get_Handler,
 		},
 		{
-			MethodName: "Create",
-			Handler:    _Vacancies_Create_Handler,
-		},
-		{
 			MethodName: "Edit",
 			Handler:    _Vacancies_Edit_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "vacancies.proto",
+	Metadata: "vacancy.proto",
 }

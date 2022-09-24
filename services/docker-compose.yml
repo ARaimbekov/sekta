@@ -20,12 +20,11 @@ services:
     build:
       dockerfile: Dockerfile
       context: vacancies
+    restart: on-failure
     ports:
       - "8033:8080"
     depends_on:
       - web
-    volumes:
-      - ./vacancies/db:/app/db
 
   db:
     image: postgres

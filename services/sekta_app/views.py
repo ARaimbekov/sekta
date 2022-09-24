@@ -1,14 +1,11 @@
-from pickle import GET
-from tokenize import Token
 from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.core.paginator import Paginator
-
 from .forms import UserLoginForm, RegisterForm, SektaCreationForm, TokenInputForm
-from .models import Sektant, Sekta, Nickname, Token
+from .models import Sektant, Sekta, Nickname, Vacancy
 from .helpers import is_belong, encrypt, decrypt
 
 
@@ -79,16 +76,18 @@ def list_all_sekts(request):
 def create_sekta(request):
     if request.user.dead:
         return HttpResponse(status=403, content='Вы мертвы')
+
+    if request.method == 'GET':
+        form = SektaCreationForm()
+        return render(request, 'create_sekta.html', {'form': form, 'user': request.user})
+
     if request.method == 'POST':
         form = SektaCreationForm(data=request.POST)
-        if form.is_valid():
-            sekta = form.save(request.user)
-            return redirect(f'/sekta/{sekta.id}')
-        else:
-            return HttpResponse(status=400,content='Секта с таким именем уже есть')
-    else:
-        form = SektaCreationForm()
-        return render(request,'create_sekta.html',{'form':form,'user':request.user})
+        if not form.is_valid():
+            return HttpResponse(status=400, content='Секта с таким именем уже есть')
+
+        sekta = form.save(request.user)
+        return redirect(f'/sekta/{sekta.id}')
 
 
 @login_required
@@ -96,14 +95,23 @@ def show_sekta(request, id):
     sekta = Sekta.objects.get(pk=id)
     participants = [[sektant, [nickname.__str__() for nickname in Nickname.objects.filter(
         sektant=sektant)]] for sektant in Sektant.objects.all() if is_belong(sekta, sektant)]
+
     if request.user != sekta.creator and not is_belong(sekta, request.user):
         return HttpResponse(status=403, content='Вы не входите в секту')
-    context = {'sekta': sekta,
-               'participants': participants, 'user': request.user}
-    if request.user == sekta.creator and request.user.dead == False:
-        context['creator'] = True
-    else:
-        context['creator'] = False
+
+
+    vacancy = Vacancy.objects.filter(sekta_id=sekta.id).first()
+    
+    is_creator = request.user == sekta.creator and request.user.dead == False
+
+    context = {
+        'sekta': sekta,
+        'participants': participants,
+        'user': request.user,
+        'token': vacancy.token if vacancy != None else None,
+        'creator': is_creator,
+    }
+
     return render(request, 'sekta.html', context)
 
 
@@ -128,8 +136,8 @@ def invite_sektant(request, id):
         return HttpResponse(status=400, content='Пользователь запретил себя приглашать')
     if follower.dead:
         return HttpResponse(status=400, content='Этот пользователь уже завершил земной путь')
-    if follower==request.user:
-        return HttpResponse(status=400,content='Вы не можете пригласить сами себя')
+    if follower == request.user:
+        return HttpResponse(status=400, content='Вы не можете пригласить сами себя')
     nickname = Nickname(sektant=follower, sekta=Sekta.objects.get(pk=id), nickname=encrypt(
         (new_name).encode('utf-8'), Sekta.objects.get(pk=id).private_key))
     nickname.save()
@@ -198,18 +206,19 @@ def sacrifice_sektant(request, id):
     follower.save()
     return HttpResponse(status=201, content=f'Сектант был успешно принесён в жертву <a href="/sekta/{sekta.id}"><h3 class="panel-title">Назад в секту</h3></a>')
 
+
 @login_required
 def join_by_token(request):
-    if request.method=='GET':
+    if request.method == 'GET':
         form = TokenInputForm
-        return render(request, 'token_input.html', {'form':form})
+        return render(request, 'token_input.html', {'form': form})
     else:
         form = TokenInputForm(data=request.POST)
         if form.is_valid():
             token = form.cleaned_data['token']
             sekta = form.cleaned_data['sekta']
 
-        if len(Token.objects.filter(Q(token=token) & Q(sekta=sekta))):
+        if len(Vacancy.objects.filter(Q(token=token) & Q(sekta=sekta))):
             if not len(Nickname.objects.filter(Q(sekta=sekta) & Q(sektant=request.user))):
                 form.save(request.user)
                 return redirect(f'/sekta/{sekta.id}')
@@ -217,5 +226,3 @@ def join_by_token(request):
                 return HttpResponse(status=400, content='Вы уже состоите в данной секте')
         else:
             return HttpResponse(status=400, content='Токен не подходит')
-
-

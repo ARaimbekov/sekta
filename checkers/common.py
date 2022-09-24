@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-# DEBUG -- logs to stderr, TRACE -- verbose log
-from enum import Enum
 import inspect
 import os
-import sys
-import lorem
-import re
 import random
+import re
+import sys
+# DEBUG -- logs to stderr, TRACE -- verbose log
+from enum import Enum
+
+import lorem
 import requests
 
 DEBUG = os.getenv("DEBUG", True)
@@ -24,10 +25,40 @@ class Status(Enum):
     CHECKER_ERROR = 110
 
 
-class CheckerException(Exception):
+class DownException(Exception):
 
-    def __init__(self, status: Status, *messages: str):
-        self.Status = status
+    def __init__(self, *messages: str):
+        self.Status = Status.DOWN
+        self.Messages = messages
+        super().__init__(self.Messages)
+
+    def __str__(self):
+        resultMessage = f"Status Code: {self.Status}\n"
+
+        for message in self.Messages:
+            resultMessage += str(message) + "\n"
+
+        return resultMessage
+
+
+class MumbleException(Exception):
+    def __init__(self, *messages: str):
+        self.Status = Status.MUMBLE
+        self.Messages = messages
+        super().__init__(self.Messages)
+
+    def __str__(self):
+        resultMessage = f"Status Code: {self.Status}\n"
+
+        for message in self.Messages:
+            resultMessage += str(message) + "\n"
+
+        return resultMessage
+
+
+class CheckerErrorException(Exception):
+    def __init__(self, *messages: str):
+        self.Status = Status.CHECKER_ERROR
         self.Messages = messages
         super().__init__(self.Messages)
 
@@ -67,28 +98,28 @@ def genFlag() -> str:
     return flag + "="
 
 
-def checkHttpCode(resp: requests.Response, requestName: str):
+def checkHttpCode(resp: requests.Response):
     if 200 <= resp.status_code < 300:
         return
 
     if 500 <= resp.status_code:
-        status = Status.DOWN
-    elif 400 <= resp.status_code < 500:
-        status = Status.MUMBLE
-    else:
-        raise CheckerException(Status.DOWN,
-                               f"unexpected behaviour on {requestName}", resp.text)
+        raise DownException(
+            f"status code {resp.status_code} on {resp.url}",
+            resp.text)
 
-    raise CheckerException(
-        status, f"status code {resp.status_code} on {requestName}", resp.text)
+    if 400 <= resp.status_code < 500:
+        raise MumbleException(
+            f"status code {resp.status_code} on {resp.url}",
+            resp.text)
+
+    raise DownException(f"unexpected behaviour on {resp.url}", resp.text)
 
 
-def find(pattern: str, text: str,):
+def find(pattern: str, text: str):
     match = re.search(pattern, text)
 
     if match == None:
-        raise CheckerException(
-            Status.MUMBLE, f"finding pattern '{pattern}' in text failed")
+        raise MumbleException(f"finding pattern '{pattern}' in text failed")
 
     return match[1]
 
@@ -97,16 +128,16 @@ def findExpected(text: str, pattern: str, expected: str):
     match = re.search(pattern, text)
 
     if match == None:
-        raise CheckerException(Status.MUMBLE,
-                               f"pattern '{pattern}' not found in text",
-                               text)
+        raise MumbleException(
+            f"pattern '{pattern}' not found in text",
+            text)
 
     if match[1] != expected:
-        raise CheckerException(Status.MUMBLE,
-                               "finding expected in received text failed",
-                               f"Expected: {expected}",
-                               f"Received: {match[1]}",
-                               text)
+        raise MumbleException(
+            "finding expected in received text failed",
+            f"Expected: {expected}",
+            f"Received: {match[1]}",
+            text)
 
 
 def findExpectedInMany(text: str, pattern: str, expected: str):
@@ -116,8 +147,8 @@ def findExpectedInMany(text: str, pattern: str, expected: str):
         if match == expected:
             return
 
-    raise CheckerException(Status.MUMBLE,
-                           "finding expected in received text failed",
-                           f"Expected: {expected}",
-                           f"Received: {matches}",
-                           text)
+    raise MumbleException(
+        "finding expected in received text failed",
+        f"Expected: {expected}",
+        f"Received: {matches}",
+        text)

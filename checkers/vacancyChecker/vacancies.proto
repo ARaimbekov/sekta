@@ -1,25 +1,25 @@
 syntax = "proto3";
 
-package vacancies;
+package vacancy;
 
-option go_package = "./vacancies";
+option go_package = "../protobuf";
 
-// protoc -I=vacancies --go-grpc_out=vacancies --go_out=vacancies vacancies/vacancies.proto
+// protoc -I=src/vacancy/protobuf --go-grpc_out=src/vacancy/protobuf --go_out=src/vacancy/protobuf src/vacancy/protobuf/vacancy.proto
 
 service Vacancies {
+    rpc Create (CreateRequest) returns (Vacancy);
     rpc List (ListRequest) returns (ListResponse);
     rpc Get (GetRequest) returns (Vacancy);
-    rpc Create (CreateRequest) returns (Vacancy);
     rpc Edit (Vacancy) returns (Vacancy);
 }
 
 message ListRequest{}
 
 message Vacancy {
-    int32 id = 1;
-    string name = 2;
-    string description  = 3;
-    bool is_active = 4;
+    int32  id = 1;
+    int32  sect_id = 2;
+    string description = 3;
+    bool   is_active = 4;
     string token  = 5;
 }
 
@@ -32,8 +32,6 @@ message GetRequest {
 }
 
 message CreateRequest {
-    string name = 1;
+    int32 sect_id = 1;
     string description  = 2;
-    bool is_active = 3;
-    string token = 4;
 }

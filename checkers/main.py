@@ -3,12 +3,14 @@
 
 import sys
 
-from common import CheckerException, Status, die, genFlag, log
-from sektaChecker.sektaChecker import SektaChecker
-from vacancyChecker.vacancyChecker import VacancyChecker
 import requests
 
-SEKTA_PORT = 8000
+from common import (CheckerErrorException, DownException, MumbleException,
+                    Status, die, genFlag, genName, log)
+from session_sect import SessionSect
+from session_vacancies import SessionVacancy
+
+SECT_PORT = 8000
 VACANCY_PORT = 8033
 
 
@@ -20,8 +22,8 @@ class Checker():
         if self.action != "check":
             self.flag_id, self.flag, self.vuln = args
 
-        self.sektaChecker = SektaChecker(host, SEKTA_PORT)
-        self.vacancyChecker = VacancyChecker(host, VACANCY_PORT)
+        self.sectHost = f"http://{host}:{SECT_PORT}"
+        self.vacancyHost = f"{host}:{VACANCY_PORT}"
 
     def main(self):
         try:
@@ -33,32 +35,65 @@ class Checker():
                 self.get()
             else:
                 message = f"Usage: {sys.argv[0]} check|put|get IP FLAGID FLAG"
-                raise CheckerException(Status.CHECKER_ERROR, message)
+                raise CheckerErrorException(message)
 
-        except CheckerException as exception:
-            print(exception, file=sys.stderr, flush=True)
-            exit(code=exception.Status.value)
+        except (DownException, MumbleException) as exception:
+            die(exception.Status, *exception.Messages)
 
         except requests.exceptions.ConnectionError as e:
             print(f"{e.request.method} {e.request.url}\n" +
                   str(e), file=sys.stderr, flush=True)
             exit(code=Status.DOWN)
 
-        # except Exception as e:
-        #     message = f"Exception: {e}\nStack:\n {traceback.format_exc()}",
-        #     die(Status.CHECKER_ERROR, e)
+        except Exception as e:
+            die(Status.CHECKER_ERROR, e)
 
     def check(self):
-        log(f"Running CHECK on {self.sektaChecker.Host}")
-        self.sektaChecker.Check()
-        self.vacancyChecker.check()
+        master = SessionSect(host=self.sectHost, debugName="master")
+        master.AskRoot()
+        master.Register()
+        master.Login()
+
+        dummy = SessionSect(host=self.sectHost, debugName="dummy")
+        dummy.Register()
+        dummy.Login()
+
+        master.CreateSekta(genName())
+        dummySecretName = genFlag()
+        master.Invite(dummy.Id, dummySecretName)
+
+        master.GetAllSects()
+        master.GetMySects()
+        acolytes = master.GetMySect()
+        dummy.InSect(acolytes)
+
+        master.Sacrifice(dummy.Id)
+        acolytes = master.GetMySect()
+        dummy.IsDead(dummySecretName, acolytes)
+        master.Logout()
+
+        vacancy = SessionVacancy(
+            host=self.vacancyHost,
+            debugName="vacancy")
+
+        vacancy.Create(master.SectId)
+        vacancy.List()
+        vacancy.GetBad(vacancy.Vacancy.Id)
+        vacancy.Edit("dummy bunny", True)
+        vacancy.Get(vacancy.Vacancy.Id)
+
+        dummy2 = SessionSect(host=self.sectHost, debugName="dummy2")
+        dummy2.Register()
+        dummy2.Login()
+        dummy2.Join(vacancy.Vacancy.SectId, vacancy.Vacancy.Token)
 
     def put(self):
-        log(f"Running PUT on {self.sektaChecker.Host}")
-        self.sektaChecker.Put(self.flag_id, genFlag())
+        # log(f"Running PUT on {self.sektaChecker.Host}")
+        # self.sektaChecker.Put(self.flag_id, genFlag())
+        pass
 
     def get(self):
-        log(f"Running GET on {self.sektaHost} {self.vacancyHost} with {self.flag_id}:{self.flag}")
+        # log(f"Running GET on {self.sektaHost} {self.vacancyHost} with {self.flag_id}:{self.flag}")
         die(Status.OK, "Not implemented")
 
 

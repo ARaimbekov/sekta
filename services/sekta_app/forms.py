@@ -1,10 +1,11 @@
 from pyexpat import model
+import uuid
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from django.forms import ModelForm, PasswordInput
 from secrets import token_bytes
 
-from .models import Nickname, Sektant, Sekta, Token
+from .models import Nickname, Sektant, Sekta, Vacancy
 from .helpers import encrypt
 
 
@@ -61,7 +62,7 @@ class SektaCreationForm(ModelForm):
 class TokenInputForm(ModelForm):
     nickname = forms.CharField()
     class Meta:
-        model = Token
+        model = Vacancy
         fields = ['sekta','token']
 
     def save(self,user):
