@@ -1,18 +1,24 @@
 {% extends "base_generic_authorized.html" %}
 
 <body>
-{% block content %}
-<h2>Choose your follower to sacrifice</h2>
+    {% block content %}
+    <h2>Choose your follower to sacrifice</h2>
 
-{% for user in users %}
+    {% for user in users %}
     <div class="user">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">{{ user.username }}</h3><button type="button" onclick="location.href='sacrifice_sektant?user={{ user.id }}'">Sacrifice</button>
+                <h3 class="panel-title">{{ user.username }}</h3>
+                <button type="button" onclick="location.href='../sacrifice_sektant?user={{ user.id }}'">
+                    Sacrifice
+                </button>
             </div>
         </div>
     </div>
-{% endfor %}
-<a href="/sekta/{{ sekta.id }}"><h3 class="panel-title">Back to sect</h3></a>
-{% endblock %}
+    {% endfor %}
+
+    <a href="/sekta/{{ sekta.id }}">
+        <h3 class="panel-title">Back to sect</h3>
+    </a>
+    {% endblock %}
 </body>

@@ -1,12 +1,14 @@
-from django.db.models import Q
-from django.shortcuts import render, redirect
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
 from django.core.paginator import Paginator
-from .forms import UserLoginForm, RegisterForm, SektaCreationForm, TokenInputForm
-from .models import Sektant, Sekta, Nickname, Vacancy
-from .helpers import is_belong, encrypt, decrypt
+from django.db.models import Q
+from django.http import HttpResponse
+from django.shortcuts import redirect, render
+
+from .forms import (RegisterForm, SektaCreationForm, TokenInputForm,
+                    UserLoginForm)
+from .helpers import decrypt, encrypt, is_belong
+from .models import Nickname, Sekta, Sektant, Vacancy
 
 
 def home(request):
@@ -99,9 +101,8 @@ def show_sekta(request, id):
     if request.user != sekta.creator and not is_belong(sekta, request.user):
         return HttpResponse(status=403, content='Вы не входите в секту')
 
-
     vacancy = Vacancy.objects.filter(sekta_id=sekta.id).first()
-    
+
     is_creator = request.user == sekta.creator and request.user.dead == False
 
     context = {
@@ -115,7 +116,7 @@ def show_sekta(request, id):
     return render(request, 'sekta.html', context)
 
 
-@login_required
+@ login_required
 def invite_sektant(request, id):
     try:
         follower = Sektant.objects.get(pk=int(request.GET.get('user')))
@@ -144,7 +145,7 @@ def invite_sektant(request, id):
     return HttpResponse(status=201, content=f'Сектант был успешно приглашен <a href="/sekta/{sekta.id}"><h3 class="panel-title">Назад в секту</h3></a>')
 
 
-@login_required
+@ login_required
 def invite_to_sekta(request, id):
     try:
         sekta = Sekta.objects.get(pk=id)
@@ -160,7 +161,7 @@ def invite_to_sekta(request, id):
     return render(request, 'invitation.html', context)
 
 
-@login_required
+@ login_required
 def sacrifice(request, id):
     try:
         sekta = Sekta.objects.get(pk=id)
@@ -176,7 +177,7 @@ def sacrifice(request, id):
     return render(request, 'sacrifice.html', context)
 
 
-@login_required
+@ login_required
 def sacrifice_sektant(request, id):
     try:
         follower = Sektant.objects.get(pk=int(request.GET.get('user')))
@@ -207,7 +208,7 @@ def sacrifice_sektant(request, id):
     return HttpResponse(status=201, content=f'Сектант был успешно принесён в жертву <a href="/sekta/{sekta.id}"><h3 class="panel-title">Назад в секту</h3></a>')
 
 
-@login_required
+@ login_required
 def join_by_token(request):
     if request.method == 'GET':
         form = TokenInputForm

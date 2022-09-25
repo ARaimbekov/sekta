@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+from html.parser import HTMLParser
 import re
 
 import requests
 
 from common import (MumbleException, checkHttpCode, find, findExpected,
                     findExpectedInMany, genName, log)
+from bs4 import BeautifulSoup
 
 
 class SessionSect:
@@ -28,8 +30,8 @@ class SessionSect:
         checkHttpCode(resp)
         self.setCSRF(resp)
 
-        self.Name = genName()
-        self.Password = genName()
+        self.Name = self._genUsername()
+        self.Password = self._genPassword()
 
         resp = self.s.post(self.Host+"/register/", data=dict(
             csrfmiddlewaretoken=self.csrfToken,
@@ -38,13 +40,8 @@ class SessionSect:
             can_be_invited=True))
         checkHttpCode(resp)
 
-    def Login(self, name: str = None, password: str = None):
+    def Login(self):
         log(f"[{self.debugName}]")
-
-        if (name == None) ^ (password == None):
-            raise Exception("provide either both creds or none")
-        if name != None:
-            self.Name, self.Password = name, password
 
         resp = self.s.get(self.Host+"/login")
 
@@ -60,14 +57,13 @@ class SessionSect:
         result = find(r'Добро пожаловать, (\d+)\.[0-9A-z]+!</h3>', resp.text)
         self.Id = int(result)
 
+    # TODO
     REGEX_SECT_TOKEN = r'Токен для вступления: ([a-f0-9\-]{36})'
 
-    def CreateSekta(self, name: str) -> tuple[int,  str]:
+    def CreateSekta(self, description: str) -> tuple[int,  str]:
         log(f"[{self.debugName}]")
 
-        if name == None:
-            raise Exception("name expected")
-        self.SectName = name
+        self.SectName = self._genSectName()
 
         resp = self.s.get(self.Host+"/create_sekta")
         checkHttpCode(resp)
@@ -75,11 +71,11 @@ class SessionSect:
 
         resp = self.s.post(self.Host+"/create_sekta/", data=dict(
             csrfmiddlewaretoken=self.csrfToken,
-            sektaname=self.SectName))
+            sektaname=self.SectName,
+            description=description))
         checkHttpCode(resp)
 
-        self.SectId = int(
-            find(r'([0-9]+)/invite\'">Invite new followers', resp.text))
+        self.SectId = int(find(r'<h2>(\d+)\..*<\/h2>', resp.text))
 
         return self.SectId, self.SectName
 
@@ -105,13 +101,22 @@ class SessionSect:
         resp = self.s.get(self.Host+f"/sekta/{self.SectId}")
         checkHttpCode(resp)
 
-        findExpected(resp.text, r"<h2>([\w\d ]+)<\/h2>", self.SectName)
+        findExpected(resp.text, r"<h2>\d+\. ([\w\d ]+)<\/h2>", self.SectName)
         findExpected(resp.text, r"<h3>Гуру: ([\w\d ]+)<\/h3>", self.Name)
 
         self.Acolytes = re.findall(
-            r"<li>\s*([\w \d]+) True name:\s*\[(.+)\]\s*<\/li>", resp.text)
+            r"([\d\w]+) True name: \[[\"\'](.+)[\"\']", BeautifulSoup(resp.text, features="lxml").get_text())
 
         return self.Acolytes
+
+    def GetSectDescription(self) -> str:
+        log(f"[{self.debugName}]")
+
+        resp = self.s.get(self.Host+f"/sekta/{self.SectId}")
+        checkHttpCode(resp)
+
+        match = re.search(r"<h3>Гуру: .+<\/h3>\s*<div>(.+)<\/div>", resp.text)
+        return match[1]
 
     def GetMySects(self):
         log(f"[{self.debugName}]")
@@ -123,6 +128,20 @@ class SessionSect:
             resp.text,
             r"<a href=\"\/sekta\/\d+\">\s*<h3 class=\"panel-title\">([\d\w]+)<\/h3>\s*<\/a>",
             self.SectName)
+
+        match = re.search(r"<a href=\"\/sekta\/(\d+)\">", resp.text)
+        self.SectId = match[1]
+
+    def GetMySectsNoCheck(self):
+        log(f"[{self.debugName}]")
+
+        resp = self.s.get(self.Host+"/my_sekts/")
+        checkHttpCode(resp)
+
+        pattern = r"<a href=\"\/sekta\/(\d+)\">\s*<h3 class=\"panel-title\">([\d\w]+)<\/h3>\s*<\/a>"
+        match = re.search(pattern, resp.text)
+        self.SectId = match[1]
+        self.SectName = match[2]
 
     def GetAllSects(self):
         log(f"[{self.debugName}]")
@@ -158,11 +177,13 @@ class SessionSect:
         if match == None:
             raise MumbleException("csrf token expected")
 
+        self.AcolyteName = self._genUsername()
+
         resp = self.s.post(self.Host+f"/token/", data=dict(
             csrfmiddlewaretoken=match.group(1),
             sekta=sectId,
             token=token,
-            nickname=genName()))
+            nickname=self.AcolyteName))
         checkHttpCode(resp)
 
         resp = self.s.get(self.Host+f"/sekta/{sectId}")
@@ -191,6 +212,8 @@ class SessionSect:
         return self.csrfToken
 
     def InSect(self, acolytes: list):
+        log(f"[{self.debugName}]")
+
         for a in acolytes:
             if self.Name == a[0]:
                 return
@@ -198,8 +221,18 @@ class SessionSect:
         raise MumbleException(f"{self.Id} expected acolyte in {acolytes}")
 
     def IsDead(self, secretName: str, acolytes: list):
+        log(f"[{self.debugName}]")
         for a in acolytes:
             if secretName in a[1]:
                 return
 
-        raise MumbleException(f"{self.Name} expected to be dead", acolytes)
+        raise MumbleException(f"{self.Name} expected to be dead")
+
+    def _genUsername(self):
+        return genName()
+
+    def _genPassword(self):
+        return genName()
+
+    def _genSectName(self):
+        return genName()

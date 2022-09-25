@@ -41,6 +41,21 @@ class DownException(Exception):
         return resultMessage
 
 
+class CorruptException(Exception):
+    def __init__(self, *messages: str):
+        self.Status = Status.CORRUPT
+        self.Messages = messages
+        super().__init__(self.Messages)
+
+    def __str__(self):
+        resultMessage = f"Status Code: {self.Status}\n"
+
+        for message in self.Messages:
+            resultMessage += str(message) + "\n"
+
+        return resultMessage
+
+
 class MumbleException(Exception):
     def __init__(self, *messages: str):
         self.Status = Status.MUMBLE
@@ -88,6 +103,10 @@ def die(code: Status, *msg: str):
 
 def genName() -> str:
     return lorem.get_word(count=1) + str(random.randint(1, 999999))
+
+
+def genDescription() -> str:
+    return "Требуются сектанты в молодой дружный коллектив"
 
 
 def genFlag() -> str:

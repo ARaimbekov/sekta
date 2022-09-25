@@ -2,12 +2,12 @@
 # -*- coding: utf-8 -*-
 
 import copy
-from tokenize import Token
+
 import grpc
 
 import vacancyChecker.vacancies_pb2 as v
 import vacancyChecker.vacancies_pb2_grpc as v_grpc
-from common import DownException, MumbleException, genName, log
+from common import DownException, MumbleException, genDescription, log
 
 
 class Vacancy:
@@ -29,7 +29,7 @@ class SessionVacancy:
     def Create(self, sect_id: int) -> Vacancy:
         log(f"[{self.debugName}]")
 
-        description = genName()
+        description = self._genDescription()
 
         req = v.CreateRequest(
             sect_id=sect_id,
@@ -150,3 +150,6 @@ class SessionVacancy:
             raise MumbleException(e,
                                   "Expected:", vars(self.Vacancy),
                                   "Received:", vars(firstVacancy))
+
+    def _genDescription(self):
+        return genDescription()
