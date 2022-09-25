@@ -85,13 +85,13 @@ class Checker():
         master.Sacrifice(dummy.Id)
         acolytes = master.GetMySect()
         dummy.IsDead(dummyAcolyteName, acolytes)
-        master.Logout()
 
         vacancy = SessionVacancy(
             host=self.vacancyHost,
             debugName="vacancy")
 
-        vacancy.Create(int(master.SectId))
+        v = vacancy.Create(int(master.SectId))
+        master.CheckToken(v.Token)
         vacancy.List()
         vacancy.GetBad(vacancy.Vacancy.Id)
         vacancy.Edit(genName(), True)
@@ -101,6 +101,8 @@ class Checker():
         dummy2.Register()
         dummy2.Login()
         dummy2.Join(vacancy.Vacancy.SectId, vacancy.Vacancy.Token)
+
+        master.Logout()
 
     def put(self):
         log(f"run on {self.sectHost} and {self.vacancyHost}")

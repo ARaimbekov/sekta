@@ -57,9 +57,6 @@ class SessionSect:
         result = find(r'Добро пожаловать, (\d+)\.[0-9A-z]+!</h3>', resp.text)
         self.Id = int(result)
 
-    # TODO
-    REGEX_SECT_TOKEN = r'Токен для вступления: ([a-f0-9\-]{36})'
-
     def CreateSekta(self, description: str) -> tuple[int,  str]:
         log(f"[{self.debugName}]")
 
@@ -108,6 +105,15 @@ class SessionSect:
             r"([\d\w]+) True name: \[[\"\'](.+)[\"\']", BeautifulSoup(resp.text, features="lxml").get_text())
 
         return self.Acolytes
+
+    def CheckToken(self, token: str):
+        log(f"[{self.debugName}]")
+
+        resp = self.s.get(self.Host+f"/sekta/{self.SectId}")
+        checkHttpCode(resp)
+
+        findExpected(
+            resp.text, r'Токен для вступления:<\/h3>\s*<h3>([a-f0-9\-]{36})<\/h3>', token)
 
     def GetSectDescription(self) -> str:
         log(f"[{self.debugName}]")
