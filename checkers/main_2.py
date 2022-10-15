@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import random
 import sys
 
 import requests
@@ -35,16 +36,14 @@ class Checker():
         self.vacancyHost = f"{host}:{VACANCY_PORT}"
 
     def main(self):
+
         try:
             if self.action == "check":
                 self.check()
             elif self.action == "put":
                 self.put()
             elif self.action == "get":
-                try:
-                    self.get()
-                except MumbleException as e:
-                    raise CorruptException(*e.Messages)
+                self.get()
             else:
                 message = f"Usage: {sys.argv[0]} check|put|get IP FLAGID FLAG"
                 raise CheckerErrorException(message)
@@ -74,35 +73,6 @@ class Checker():
         dummy.Login()
 
         master.CreateSekta(genDescription())
-        dummyAcolyteName = genName()
-        master.Invite(dummy.Id, dummyAcolyteName)
-
-        master.GetAllSects()
-        master.GetMySects()
-        acolytes = master.GetMySect()
-        dummy.InSect(acolytes)
-
-        master.Sacrifice(dummy.Id)
-        acolytes = master.GetMySect()
-        dummy.IsDead(dummyAcolyteName, acolytes)
-
-        vacancy = SessionVacancy(
-            host=self.vacancyHost,
-            debugName="vacancy")
-
-        v = vacancy.Create(int(master.SectId))
-        master.CheckToken(v.Token)
-        vacancy.List()
-        vacancy.GetBad(vacancy.Vacancy.Id)
-        vacancy.Edit(genName(), True)
-        vacancy.Get(vacancy.Vacancy.Id)
-
-        dummy2 = SessionSect(host=self.sectHost, debugName="dummy2")
-        dummy2.Register()
-        dummy2.Login()
-        dummy2.Join(vacancy.Vacancy.SectId, vacancy.Vacancy.Token)
-
-        master.Logout()
 
     def put(self):
         log(f"run on {self.sectHost} and {self.vacancyHost}")
@@ -110,48 +80,36 @@ class Checker():
         master = SessionSect(host=self.sectHost, debugName="master")
         master.Register()
         master.Login()
+        master.CreateSekta(self.flag)
 
-        dummy = SessionSect(host=self.sectHost, debugName="dummy")
-        dummy.Register()
-        dummy.Login()
-
-        master.CreateSekta(genDescription())
-        master.Invite(dummy.Id, self.flag)
-
-        acolytes = master.GetMySect()
-        for (name, encryptedSecretName) in acolytes:
-            if name == dummy.Name:
-                encryptedFlag = encryptedSecretName
-                break
+        for _ in range(random.randint(2, 5)):
+            dummy = SessionSect(host=self.sectHost, debugName="dummy")
+            dummy.Register()
+            dummy.Login()
+            master.Invite(dummy.Id, genName)
 
         vacancy = SessionVacancy(
             host=self.vacancyHost,
             debugName="vacancy")
         vacancy.Create(master.SectId)
 
-        print(
-            f"{self.flagId}#{master.Name}#{master.Password}#{encryptedFlag}", end="")
+        print(f"{self.flagId}#{master.Name}#{master.Password}", end="")
 
     def get(self):
         log(f"run on {self.sectHost} and {self.vacancyHost}")
-        log(f"creds: flag_id = {self.flagId}\t flag={self.flag}")
 
         master = SessionSect(host=self.sectHost, debugName="master")
 
         args = self.flagId.split("#")
         master.Name = args[1]
         master.Password = args[2]
-        encryptedFlag = args[3]
 
         master.Login()
         master.GetMySectsNoCheck()
-        acolytes = master.GetMySect()
+        description = master.GetSectDescription()
 
-        for _, secretName in acolytes:
-            if encryptedFlag == secretName:
-                return
-
-        raise CorruptException("flag not found")
+        if description != self.flag:
+            raise CorruptException("flag not found")
 
 
 if __name__ == "__main__":

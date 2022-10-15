@@ -2,7 +2,7 @@ package main
 
 import (
 	"log"
-	"vacancies/app"
+	"vacancies/src/app"
 )
 
 func main() {

@@ -14,7 +14,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0fvacancies.proto\x12\tvacancies\"\r\n\x0bListRequest\"Z\n\x07Vacancy\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x03 \x01(\t\x12\x11\n\tis_active\x18\x04 \x01(\x08\x12\r\n\x05token\x18\x05 \x01(\t\"5\n\x0cListResponse\x12%\n\tvacancies\x18\x01 \x03(\x0b\x32\x12.vacancies.Vacancy\"\x18\n\nGetRequest\x12\n\n\x02id\x18\x01 \x01(\x05\"T\n\rCreateRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x02 \x01(\t\x12\x11\n\tis_active\x18\x03 \x01(\x08\x12\r\n\x05token\x18\x04 \x01(\t2\xde\x01\n\tVacancies\x12\x37\n\x04List\x12\x16.vacancies.ListRequest\x1a\x17.vacancies.ListResponse\x12\x30\n\x03Get\x12\x15.vacancies.GetRequest\x1a\x12.vacancies.Vacancy\x12\x36\n\x06\x43reate\x12\x18.vacancies.CreateRequest\x1a\x12.vacancies.Vacancy\x12.\n\x04\x45\x64it\x12\x12.vacancies.Vacancy\x1a\x12.vacancies.VacancyB\rZ\x0b./vacanciesb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0fvacancies.proto\x12\x07vacancy\"\r\n\x0bListRequest\"]\n\x07Vacancy\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0f\n\x07sect_id\x18\x02 \x01(\x05\x12\x13\n\x0b\x64\x65scription\x18\x03 \x01(\t\x12\x11\n\tis_active\x18\x04 \x01(\x08\x12\r\n\x05token\x18\x05 \x01(\t\"3\n\x0cListResponse\x12#\n\tvacancies\x18\x01 \x03(\x0b\x32\x10.vacancy.Vacancy\"\x18\n\nGetRequest\x12\n\n\x02id\x18\x01 \x01(\x05\"5\n\rCreateRequest\x12\x0f\n\x07sect_id\x18\x01 \x01(\x05\x12\x13\n\x0b\x64\x65scription\x18\x02 \x01(\t2\xce\x01\n\tVacancies\x12\x32\n\x06\x43reate\x12\x16.vacancy.CreateRequest\x1a\x10.vacancy.Vacancy\x12\x33\n\x04List\x12\x14.vacancy.ListRequest\x1a\x15.vacancy.ListResponse\x12,\n\x03Get\x12\x13.vacancy.GetRequest\x1a\x10.vacancy.Vacancy\x12*\n\x04\x45\x64it\x12\x10.vacancy.Vacancy\x1a\x10.vacancy.VacancyB\rZ\x0b../protobufb\x06proto3')
 
 
 
@@ -26,35 +26,35 @@ _CREATEREQUEST = DESCRIPTOR.message_types_by_name['CreateRequest']
 ListRequest = _reflection.GeneratedProtocolMessageType('ListRequest', (_message.Message,), {
   'DESCRIPTOR' : _LISTREQUEST,
   '__module__' : 'vacancies_pb2'
-  # @@protoc_insertion_point(class_scope:vacancies.ListRequest)
+  # @@protoc_insertion_point(class_scope:vacancy.ListRequest)
   })
 _sym_db.RegisterMessage(ListRequest)
 
 Vacancy = _reflection.GeneratedProtocolMessageType('Vacancy', (_message.Message,), {
   'DESCRIPTOR' : _VACANCY,
   '__module__' : 'vacancies_pb2'
-  # @@protoc_insertion_point(class_scope:vacancies.Vacancy)
+  # @@protoc_insertion_point(class_scope:vacancy.Vacancy)
   })
 _sym_db.RegisterMessage(Vacancy)
 
 ListResponse = _reflection.GeneratedProtocolMessageType('ListResponse', (_message.Message,), {
   'DESCRIPTOR' : _LISTRESPONSE,
   '__module__' : 'vacancies_pb2'
-  # @@protoc_insertion_point(class_scope:vacancies.ListResponse)
+  # @@protoc_insertion_point(class_scope:vacancy.ListResponse)
   })
 _sym_db.RegisterMessage(ListResponse)
 
 GetRequest = _reflection.GeneratedProtocolMessageType('GetRequest', (_message.Message,), {
   'DESCRIPTOR' : _GETREQUEST,
   '__module__' : 'vacancies_pb2'
-  # @@protoc_insertion_point(class_scope:vacancies.GetRequest)
+  # @@protoc_insertion_point(class_scope:vacancy.GetRequest)
   })
 _sym_db.RegisterMessage(GetRequest)
 
 CreateRequest = _reflection.GeneratedProtocolMessageType('CreateRequest', (_message.Message,), {
   'DESCRIPTOR' : _CREATEREQUEST,
   '__module__' : 'vacancies_pb2'
-  # @@protoc_insertion_point(class_scope:vacancies.CreateRequest)
+  # @@protoc_insertion_point(class_scope:vacancy.CreateRequest)
   })
 _sym_db.RegisterMessage(CreateRequest)
 
@@ -62,17 +62,17 @@ _VACANCIES = DESCRIPTOR.services_by_name['Vacancies']
 if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
-  DESCRIPTOR._serialized_options = b'Z\013./vacancies'
-  _LISTREQUEST._serialized_start=30
-  _LISTREQUEST._serialized_end=43
-  _VACANCY._serialized_start=45
-  _VACANCY._serialized_end=135
-  _LISTRESPONSE._serialized_start=137
-  _LISTRESPONSE._serialized_end=190
-  _GETREQUEST._serialized_start=192
-  _GETREQUEST._serialized_end=216
-  _CREATEREQUEST._serialized_start=218
-  _CREATEREQUEST._serialized_end=302
-  _VACANCIES._serialized_start=305
-  _VACANCIES._serialized_end=527
+  DESCRIPTOR._serialized_options = b'Z\013../protobuf'
+  _LISTREQUEST._serialized_start=28
+  _LISTREQUEST._serialized_end=41
+  _VACANCY._serialized_start=43
+  _VACANCY._serialized_end=136
+  _LISTRESPONSE._serialized_start=138
+  _LISTRESPONSE._serialized_end=189
+  _GETREQUEST._serialized_start=191
+  _GETREQUEST._serialized_end=215
+  _CREATEREQUEST._serialized_start=217
+  _CREATEREQUEST._serialized_end=270
+  _VACANCIES._serialized_start=273
+  _VACANCIES._serialized_end=479
 # @@protoc_insertion_point(module_scope)

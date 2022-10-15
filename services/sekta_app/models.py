@@ -37,7 +37,9 @@ class Nickname(models.Model):
     class Meta:
         unique_together=['sektant','sekta']
 
-class Token(models.Model):
-    token = models.CharField(max_length=40)
+class Vacancy(models.Model):
     sekta = models.ForeignKey(Sekta,on_delete=models.CASCADE)
+    token = models.CharField(max_length=40)
+    description = models.CharField(max_length=40)
+    is_active = models.BooleanField()
 

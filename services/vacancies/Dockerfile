@@ -1,11 +1,16 @@
 FROM golang:1.18-alpine
 
-RUN apk update && \
-    apk add build-base
+WORKDIR /vacancies
 
-RUN mkdir /app 
-COPY . /app
-WORKDIR /app
-RUN go build -o server . 
+ADD go.mod .
+ADD go.sum .
+RUN go mod download
 
-CMD [ "/app/server" ]
+COPY main.go .
+COPY src ./src
+
+RUN go build -o main
+
+EXPOSE 8080
+
+CMD [ "./main" ]
