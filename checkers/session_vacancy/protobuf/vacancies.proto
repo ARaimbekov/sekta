@@ -4,7 +4,7 @@ package vacancy;
 
 option go_package = "../protobuf";
 
-// protoc -I=src/vacancy/protobuf --go-grpc_out=src/vacancy/protobuf --go_out=src/vacancy/protobuf src/vacancy/protobuf/vacancy.proto
+// python3 -m grpc_tools.protoc -I . --python_out=. --grpc_python_out=. vacancies.proto
 
 service Vacancies {
     rpc Create (CreateRequest) returns (Vacancy);
@@ -17,11 +17,13 @@ message ListRequest{}
 
 message Vacancy {
     int32  id = 1;
-    int32  sectId = 2;
-    string description = 3;
-    bool   is_active = 4;
-    string token  = 5;
+    int32  sect_id = 2;
+    string name = 3;
+    string description = 4;
+    bool   is_active = 5;
+    string token  = 6;
 }
+
 
 message ListResponse {
     repeated Vacancy vacancies = 1;
@@ -29,6 +31,7 @@ message ListResponse {
 
 message GetRequest {
     int32 id = 1;
+    string name = 2;
 }
 
 message CreateRequest {

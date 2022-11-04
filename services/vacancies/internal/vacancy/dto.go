@@ -6,7 +6,8 @@ type CreateDTO struct {
 }
 
 type GetDTO struct {
-	Id int
+	Id   int
+	Name string
 }
 
 type EditDTO struct {

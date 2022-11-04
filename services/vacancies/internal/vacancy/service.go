@@ -24,17 +24,7 @@ func (s *Service) List() (vs []Vacancy, err error) {
 }
 
 func (s *Service) Get(dto *GetDTO) (v *Vacancy, err error) {
-	v, err = s.storage.Get(dto.Id)
-	if err != nil {
-		return
-	}
-
-	if !v.IsActive {
-		err = ErrNotFound
-		return
-	}
-
-	return
+	return s.storage.Get(dto.Id, dto.Name, true)
 }
 
 func (s *Service) Create(dto *CreateDTO) (v *Vacancy, err error) {
@@ -49,15 +39,6 @@ func (s *Service) Create(dto *CreateDTO) (v *Vacancy, err error) {
 		return
 	}
 
-	// if err == nil {
-	// 	err = errors.New("already exist")
-	// 	return
-	// }
-
-	// if !errors.Is(err, ErrNotFound) {
-	// 	return
-	// }
-
 	v, err = s.storage.Create(dto)
 	if err != nil {
 		return
@@ -68,14 +49,13 @@ func (s *Service) Create(dto *CreateDTO) (v *Vacancy, err error) {
 
 func (s *Service) Edit(dto *EditDTO) (v *Vacancy, err error) {
 
-	v, err = s.storage.Get(dto.Id)
+	v, err = s.storage.Get(dto.Id, "", false)
 	if err != nil {
 		return
 	}
 
 	if dto.Token != v.Token {
 		ErrNotOwner = errors.New("not owner")
-		// err = ErrNotOwner
 		return
 	}
 
@@ -84,7 +64,7 @@ func (s *Service) Edit(dto *EditDTO) (v *Vacancy, err error) {
 		return
 	}
 
-	v, err = s.storage.Get(dto.Id)
+	v, err = s.storage.Get(dto.Id, "", false)
 	if err != nil {
 		return
 	}

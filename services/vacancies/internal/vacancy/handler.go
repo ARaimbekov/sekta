@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"log"
-	"vacancies/src/vacancy/protobuf"
+	"vacancies/internal/vacancy/protobuf"
 
 	"gorm.io/gorm"
 )
@@ -40,6 +40,7 @@ func (h Handler) List(context.Context, *protobuf.ListRequest) (resp *protobuf.Li
 		resp.Vacancies = append(resp.Vacancies, &protobuf.Vacancy{
 			Id:          int32(v.Id),
 			SectId:      int32(v.SektaId),
+			Name:        v.Sect.Sektaname,
 			Description: v.Description,
 			IsActive:    v.IsActive,
 		})
@@ -52,7 +53,8 @@ func (h Handler) Get(_ context.Context, req *protobuf.GetRequest) (vacancy *prot
 	defer handleErr(&err)
 
 	dto := GetDTO{
-		Id: int(req.Id),
+		Id:   int(req.Id),
+		Name: req.Name,
 	}
 
 	v, err := h.service.Get(&dto)
@@ -63,6 +65,7 @@ func (h Handler) Get(_ context.Context, req *protobuf.GetRequest) (vacancy *prot
 	vacancy = &protobuf.Vacancy{
 		Id:          int32(v.Id),
 		SectId:      int32(v.SektaId),
+		Name:        v.Sect.Sektaname,
 		Description: v.Description,
 		IsActive:    v.IsActive,
 		Token:       v.Token,
@@ -86,6 +89,7 @@ func (h Handler) Create(_ context.Context, req *protobuf.CreateRequest) (vacancy
 	vacancy = &protobuf.Vacancy{
 		Id:          int32(v.Id),
 		SectId:      int32(v.SektaId),
+		Name:        v.Sect.Sektaname,
 		Description: v.Description,
 		IsActive:    v.IsActive,
 		Token:       v.Token,
@@ -110,6 +114,7 @@ func (h Handler) Edit(_ context.Context, req *protobuf.Vacancy) (vacancy *protob
 	vacancy = &protobuf.Vacancy{
 		Id:          int32(v.Id),
 		SectId:      int32(v.SektaId),
+		Name:        v.Sect.Sektaname,
 		Description: v.Description,
 		IsActive:    v.IsActive,
 		Token:       v.Token,

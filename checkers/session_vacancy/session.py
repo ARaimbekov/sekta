@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+
 import copy
 
 import grpc
+import utils.exceptions as excepts
+import utils.utils as utils
 
-import vacancyChecker.vacancies_pb2 as v
-import vacancyChecker.vacancies_pb2_grpc as v_grpc
-from common import DownException, MumbleException, genDescription, log
+import session_vacancy.protobuf.vacancies_pb2 as v
+import session_vacancy.protobuf.vacancies_pb2_grpc as v_grpc
 
 
 class Vacancy:
@@ -26,20 +28,18 @@ class SessionVacancy:
         channel = grpc.insecure_channel(self.Host)
         self.stub = v_grpc.VacanciesStub(channel)
 
-    def Create(self, sect_id: int) -> Vacancy:
-        log(f"[{self.debugName}]")
-
-        description = self._genDescription()
+    def Create(self, sectId: int, description: str) -> Vacancy:
+        utils.log(f"[{self.debugName}]")
 
         req = v.CreateRequest(
-            sect_id=sect_id,
+            sect_id=sectId,
             description=description,
         )
 
         try:
             resp = self.stub.Create(req)
         except Exception as e:
-            raise DownException("create method failed", str(e))
+            raise excepts.DownException("create method failed", str(e))
 
         self.Vacancy = Vacancy(
             id=resp.id,
@@ -50,15 +50,15 @@ class SessionVacancy:
         )
 
         try:
-            assert self.Vacancy.SectId == sect_id, "wrong sect id"
+            assert self.Vacancy.SectId == sectId, "wrong sect id"
             assert self.Vacancy.Description == description, "wrong desrciption"
         except AssertionError as e:
-            raise MumbleException(str(e))
+            raise excepts.MumbleException(str(e))
 
         return self.Vacancy
 
     def GetBad(self, vacancyId: int):
-        log(f"[{self.debugName}]")
+        utils.log(f"[{self.debugName}]")
 
         req = v.GetRequest(id=vacancyId)
 
@@ -67,10 +67,10 @@ class SessionVacancy:
         except Exception:
             return
 
-        raise MumbleException("get method expected to fail")
+        raise excepts.MumbleException("get method expected to fail")
 
     def Edit(self, description: str, isActive: bool):
-        log(f"[{self.debugName}]")
+        utils.log(f"[{self.debugName}]")
 
         req = v.Vacancy(
             id=self.Vacancy.Id,
@@ -81,7 +81,7 @@ class SessionVacancy:
         try:
             resp = self.stub.Edit(req)
         except Exception as e:
-            raise DownException("edit method failed", str(e))
+            raise excepts.DownException("edit method failed", str(e))
 
         self.Vacancy.Description = resp.description
         self.Vacancy.IsActive = resp.is_active
@@ -90,7 +90,7 @@ class SessionVacancy:
             assert description == self.Vacancy.Description, "wrong desrciption"
             assert isActive == self.Vacancy.IsActive, "wrong is active"
         except AssertionError as e:
-            raise MumbleException(
+            raise excepts.MumbleException(
                 str(e),
                 "Expected",
                 description,
@@ -100,14 +100,14 @@ class SessionVacancy:
                 self.Vacancy.IsActive)
 
     def Get(self, vacancyId: int):
-        log(f"[{self.debugName}]")
+        utils.log(f"[{self.debugName}]")
 
         req = v.GetRequest(id=vacancyId)
 
         try:
             resp = self.stub.Get(req)
         except Exception as e:
-            raise DownException("get method failed", str(e))
+            raise excepts.DownException("get method failed", str(e))
 
         receivedVacancy = Vacancy(
             id=resp.id,
@@ -119,20 +119,21 @@ class SessionVacancy:
         try:
             assert vars(self.Vacancy) == vars(receivedVacancy), "wrong vacancy"
         except AssertionError as e:
-            raise MumbleException(e,
-                                  "Expected:", vars(self.Vacancy),
-                                  "Received:", vars(receivedVacancy))
+            raise excepts.MumbleException(e,
+                                          "Expected:", vars(self.Vacancy),
+                                          "Received:", vars(receivedVacancy))
 
     def List(self):
-        log(f"[{self.debugName}]")
+        utils.log(f"[{self.debugName}]")
 
         try:
             resp = self.stub.List(v.ListRequest())
         except Exception as e:
-            raise DownException("list method failed", str(e))
+            raise excepts.DownException("list method failed", str(e))
 
         if len(resp.vacancies) == 0:
-            raise MumbleException('list method expect at least 1 vacancy')
+            raise excepts.MumbleException(
+                'list method expect at least 1 vacancy')
 
         firstVacancy = Vacancy(
             id=resp.vacancies[0].id,
@@ -147,9 +148,6 @@ class SessionVacancy:
         try:
             assert vars(noTokenVacancy) == vars(firstVacancy), "wrong vacancy"
         except AssertionError as e:
-            raise MumbleException(e,
-                                  "Expected:", vars(self.Vacancy),
-                                  "Received:", vars(firstVacancy))
-
-    def _genDescription(self):
-        return genDescription()
+            raise excepts.MumbleException(e,
+                                          "Expected:", vars(self.Vacancy),
+                                          "Received:", vars(firstVacancy))

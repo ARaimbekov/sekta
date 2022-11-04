@@ -2,11 +2,11 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-import vacancyChecker.vacancies_pb2 as vacancies__pb2
+import vacancies_pb2 as vacancies__pb2
 
 
 class VacanciesStub(object):
-    """protoc -I=src/vacancy/protobuf --go-grpc_out=src/vacancy/protobuf --go_out=src/vacancy/protobuf src/vacancy/protobuf/vacancy.proto
+    """python3 -m grpc_tools.protoc -I . --python_out=. --grpc_python_out=. vacancies.proto
 
     """
 
@@ -39,7 +39,7 @@ class VacanciesStub(object):
 
 
 class VacanciesServicer(object):
-    """protoc -I=src/vacancy/protobuf --go-grpc_out=src/vacancy/protobuf --go_out=src/vacancy/protobuf src/vacancy/protobuf/vacancy.proto
+    """python3 -m grpc_tools.protoc -I . --python_out=. --grpc_python_out=. vacancies.proto
 
     """
 
@@ -98,7 +98,7 @@ def add_VacanciesServicer_to_server(servicer, server):
 
  # This class is part of an EXPERIMENTAL API.
 class Vacancies(object):
-    """protoc -I=src/vacancy/protobuf --go-grpc_out=src/vacancy/protobuf --go_out=src/vacancy/protobuf src/vacancy/protobuf/vacancy.proto
+    """python3 -m grpc_tools.protoc -I . --python_out=. --grpc_python_out=. vacancies.proto
 
     """
 
