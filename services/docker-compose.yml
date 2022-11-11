@@ -3,10 +3,12 @@ version: "3"
 services:
 
   web:
-    build: .
-    command: ./run.sh
+    build: 
+      dockerfile: Dockerfile
+      context: sect
+    command: /code/run.sh
     volumes:
-      - .:/code
+      - ./sect:/code
     ports:
       - "8000:8000"
     environment:
