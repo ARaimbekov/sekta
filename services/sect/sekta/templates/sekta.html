@@ -3,22 +3,34 @@
 <body>
     {% block content %}
     <h2>{{sekta.id}}. {{ sekta.sektaname }}</h2>
+    <div>{{ sekta.description }}</div>
 
     <h3>Гуру: {{ sekta.creator }}</h3>
-    <div>{{ sekta.description }}</div>
+    
     {% if creator and token != None %}
     <h3>Токен для вступления:</h3>
     <h3>{{token}}</h3>
     {% endif %}
 
+    {% if creator %}
+        <p>Только вы знаете Тайные имена всех последователей (ведь вы их приглашали)</p>
+        <p>Лишь Тайные имена послуживших великой цели участников доступны прочим</p>
+    {% else %}
+        <p>Только наш гуру знает Тайные имена всех последователей</p>
+        <p>Лишь Тайные имена послуживших великой цели участников доступны нам</p>
+    {% endif %}
     <h3>Участники:</h3>
     {% for sektant,nickname in participants %}
-    <li>{{ sektant.username }} True name: {{ nickname }}</li>
+    <li>{{ sektant.username }} Тайное имя: {{ nickname }}</li>
+    {% empty %}
+        <div>
+            <p>-</p>
+        </div>
     {% endfor %}
 
     {% if creator %}
-    <button type="button" onclick="location.href='invite'">Invite new followers</button>
-    <button type="button" onclick="location.href='sacrifice'">Sacrifice followers</button>
+    <button type="button" onclick="location.href='invite'">Добавить новых последователей</button>
+    <button type="button" onclick="location.href='sacrifice'">Совершить жертвоприношение</button>
     {% endif %}
     {% endblock %}
 </body>

@@ -17,7 +17,9 @@ class UserLoginForm(AuthenticationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['username'].widget.attrs['placeholder'] = 'логин'
+        self.fields['username'].label = 'Логин'
         self.fields['password'].widget.attrs['placeholder'] = 'пароль'
+        self.fields['password'].label='Пароль'
         for field_name, field in self.fields.items():
             field.widget.attrs['class'] = f'login-form-{field_name}'
 
@@ -30,10 +32,10 @@ class UserLoginForm(AuthenticationForm):
 
 class RegisterForm(ModelForm):
     username = forms.CharField(
-        max_length=100, widget=forms.TextInput(attrs={'placeholder': 'логин'}))
+        max_length=100, widget=forms.TextInput(attrs={'placeholder': 'логин'}),label='Логин')
     password = forms.CharField(
-        widget=PasswordInput(attrs={'placeholder': 'пароль'}))
-    can_be_invited = forms.BooleanField(required=False)
+        widget=PasswordInput(attrs={'placeholder': 'пароль'}),label='Пароль')
+    can_be_invited = forms.BooleanField(required=False, label='Разрешить приглашать меня в секты')
 
     class Meta:
         model = Sektant
@@ -48,7 +50,7 @@ class RegisterForm(ModelForm):
 
 
 class SektaCreationForm(ModelForm):
-    sektaname = forms.CharField(max_length=100)
+    sektaname = forms.CharField(max_length=100, label='Название секты')
 
     class Meta:
         model = Sekta
@@ -60,10 +62,15 @@ class SektaCreationForm(ModelForm):
         return sekta
 
 class TokenInputForm(ModelForm):
-    nickname = forms.CharField()
+    nickname = forms.CharField(label='Тайное имя')
     class Meta:
         model = Vacancy
         fields = ['sekta','token']
+
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.fields['sekta'].label = 'Секта'
+        self.fields['token'].label = 'Пригласительный токен'
 
     def save(self,user):
         sekta=self.cleaned_data['sekta']

@@ -2,12 +2,13 @@
 
 <body>
     {% block content %}
-    <h3>Вы можете вступить в чужую секту сами и выбрать себе новое имя, но только если у вас есть секретный пригласительный токен секты</h3>
+    <h3>Вступление в секту по токену</h3>
+    <p>Вы можете вступить в чужую секту сами и выбрать себе Тайное имя, но только если у вас есть секретный пригласительный токен секты</p>
     <div class="panel panel-default">
         <form method="POST" class="form-group">
             {% csrf_token %}
             {{ form.as_p }}
-            <button type="submit" class="btn btn-success">Join</button>
+            <button type="submit" class="btn btn-success">Вступить в секту</button>
         </form>
     </div>
     {% endblock %}

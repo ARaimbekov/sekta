@@ -14,7 +14,7 @@ body{
     background-size: cover;
     background-position: top;
     font-family: Uroob ;
-    font-size: 36px;
+    font-size: 20px;
     color: #fff;
     margin-left: 40%;
 }
@@ -58,6 +58,7 @@ button{
     color: black;
     border: 0px;    
     border-radius: 5px;
+    cursor: pointer;
 
 }
 
@@ -68,9 +69,20 @@ button{
     width: 20%;
     height: 100%;
     position:absolute;
-    font-size: 30px;
+    font-size: 25px;
     background-size: cover;
     background-position: top;
     margin-left: 0%;
+}
+
+p {
+    margin: 10px 0;
+}
+
+form {
+    border-top: 1px gray solid ;
+    border-bottom: 1px gray solid ;
+    padding: 10px 5px;
+    width: fit-content;
 }
 

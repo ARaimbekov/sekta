@@ -4,10 +4,10 @@
     {% block content %}
     <div class="login-box">
         <form method="POST" class="form-group">
-            <h1>Register</h1>
+            <h1>Регистрация</h1>
             {% csrf_token %}
             {{ form.as_p }}
-            <button type="submit" class="btn btn-success">Register</button>
+            <button type="submit" class="btn btn-success">Зарегистрироваться</button>
         </form>
     </div>
     {% endblock %}

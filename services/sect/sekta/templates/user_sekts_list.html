@@ -3,8 +3,9 @@
 <body>
 {% block content %}
 
-<h2>Created sects</h2>
+<h2>Мои секты</h2>
 
+<h3>Секты, где я создатель</h3>
 {% for sekta in user_sekts %}
     <div class="sekta">
         <div class="panel panel-default">
@@ -13,17 +14,27 @@
             </div>
         </div>
     </div>
-{% endfor %}
-
-<h2>Followed sects</h2>
-{% for sekta in member_sekts %}
-    <div class="sekta">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <a href="/sekta/{{ sekta.id }}"><h3 class="panel-title">{{ sekta.sektaname }}</h3></a>
-            </div>
-        </div>
+{% empty %}
+    <div>
+        <p>-</p>
     </div>
 {% endfor %}
+
+{% if user.can_be_invited %}
+    <h3>Секты, где я участник</h3>
+    {% for sekta in member_sekts %}
+        <div class="sekta">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <a href="/sekta/{{ sekta.id }}"><h3 class="panel-title">{{ sekta.sektaname }}</h3></a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div>
+            <p>-</p>
+        </div>
+    {% endfor %}
+{% endif %}
 {% endblock %}
 </body>

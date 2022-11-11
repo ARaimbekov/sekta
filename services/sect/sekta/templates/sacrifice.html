@@ -2,7 +2,9 @@
 
 <body>
     {% block content %}
-    <h2>Choose your follower to sacrifice</h2>
+    <h2>Жертвоприношение</h2>
+    <p>Выберите вашего последователя, который будет принесён в жертву</p>
+    <p>После принесения в жертву он будет удостоен того, чтобы его Тайное имя видели остальные участники вашей секты</p>
 
     {% for user in users %}
     <div class="user">
@@ -10,7 +12,7 @@
             <div class="panel-heading">
                 <h3 class="panel-title">{{ user.username }}</h3>
                 <button type="button" onclick="location.href='../sacrifice_sektant?user={{ user.id }}'">
-                    Sacrifice
+                    Принести в жертву
                 </button>
             </div>
         </div>
@@ -18,7 +20,7 @@
     {% endfor %}
 
     <a href="/sekta/{{ sekta.id }}">
-        <h3 class="panel-title">Back to sect</h3>
+        <h3 class="panel-title">Назад в секту</h3>
     </a>
     {% endblock %}
 </body>

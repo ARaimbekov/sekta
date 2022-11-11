@@ -77,7 +77,7 @@ def list_all_sekts(request):
 @login_required
 def create_sekta(request):
     if request.user.dead:
-        return HttpResponse(status=403, content='Вы мертвы')
+        return render_helper(request, status=403, content='Вы мертвы')
 
     if request.method == 'GET':
         form = SektaCreationForm()
@@ -86,7 +86,7 @@ def create_sekta(request):
     if request.method == 'POST':
         form = SektaCreationForm(data=request.POST)
         if not form.is_valid():
-            return HttpResponse(status=400, content='Секта с таким именем уже есть')
+            return render_helper(request, status=400, content='Секта с таким именем уже есть')
 
         sekta = form.save(request.user)
         return redirect(f'/sekta/{sekta.id}')
@@ -99,7 +99,7 @@ def show_sekta(request, id):
         sektant=sektant)]] for sektant in Sektant.objects.all() if is_belong(sekta, sektant)]
 
     if request.user != sekta.creator and not is_belong(sekta, request.user):
-        return HttpResponse(status=403, content='Вы не входите в секту')
+        return render_helper(request, status=403, content='Вы не входите в секту')
 
     vacancy = Vacancy.objects.filter(sekta_id=sekta.id).first()
 
@@ -121,28 +121,28 @@ def invite_sektant(request, id):
     try:
         follower = Sektant.objects.get(pk=int(request.GET.get('user')))
     except Sektant.DoesNotExist:
-        return HttpResponse(status=400, content='Неверный id пользователя или секты')
+        return render_helper(request, status=400, content='Неверный id пользователя или секты')
     try:
         sekta = Sekta.objects.get(pk=int(request.GET.get('sect')))
     except Sekta.DoesNotExist:
-        return HttpResponse(status=400, content='Неверный id пользователя или секты')
+        return render_helper(request, status=400, content='Неверный id пользователя или секты')
     new_name = request.GET.get('nickname')
     if request.user != sekta.creator:
-        return HttpResponse(status=403, content='Вы не можете приглашать в чужую секту')
+        return render_helper(request, status=403, content='Вы не можете приглашать в чужую секту')
     if request.user.dead:
-        return HttpResponse(status=403, content='Вы мертвы')
+        return render_helper(request, status=403, content='Вы мертвы')
     if len(Nickname.objects.filter(sektant=follower).filter(sekta=sekta)) > 0:
-        return HttpResponse(status=400, content='Этот пользователь уже в вашей секте')
+        return render_helper(request, status=400, content='Этот пользователь уже в вашей секте')
     if follower.can_be_invited == False:
-        return HttpResponse(status=400, content='Пользователь запретил себя приглашать')
+        return render_helper(request, status=400, content='Пользователь запретил себя приглашать')
     if follower.dead:
-        return HttpResponse(status=400, content='Этот пользователь уже завершил земной путь')
+        return render_helper(request, status=400, content='Этот пользователь уже завершил земной путь')
     if follower == request.user:
-        return HttpResponse(status=400, content='Вы не можете пригласить сами себя')
+        return render_helper(request, status=400, content='Вы не можете пригласить сами себя')
     nickname = Nickname(sektant=follower, sekta=Sekta.objects.get(pk=id), nickname=encrypt(
         (new_name).encode('utf-8'), Sekta.objects.get(pk=id).private_key))
     nickname.save()
-    return HttpResponse(status=201, content=f'Сектант был успешно приглашен <a href="/sekta/{sekta.id}"><h3 class="panel-title">Назад в секту</h3></a>')
+    return render_helper(request, status=201, content=f'Сектант был успешно приглашен <a href="/sekta/{sekta.id}"><h3 class="panel-title">Назад в секту</h3></a>')
 
 
 @ login_required
@@ -150,11 +150,11 @@ def invite_to_sekta(request, id):
     try:
         sekta = Sekta.objects.get(pk=id)
     except Sekta.DoesNotExist:
-        return HttpResponse(status=400, content='Неверный id пользователя или секты')
+        return render_helper(request, status=400, content='Неверный id пользователя или секты')
     if request.user != sekta.creator:
-        return HttpResponse(status=403, content='Вы не можете приглашать в чужую секту')
+        return render_helper(request, status=403, content='Вы не можете приглашать в чужую секту')
     if request.user.dead:
-        return HttpResponse(status=403, content='Вы мертвы')
+        return render_helper(request, status=403, content='Вы мертвы')
     users = [user for user in Sektant.objects.filter(can_be_invited=True) if not is_belong(
         sekta, user) and user != sekta.creator and not user.dead]
     context = {'sekta': sekta, 'users': users, 'user': request.user}
@@ -166,11 +166,11 @@ def sacrifice(request, id):
     try:
         sekta = Sekta.objects.get(pk=id)
     except Sekta.DoesNotExist:
-        return HttpResponse(status=400, content='Неверный id пользователя или секты')
+        return render_helper(request, status=400, content='Неверный id пользователя или секты')
     if request.user != sekta.creator:
-        return HttpResponse(status=403, content='Вы не можете совершать жертвоприношения в чужой секте')
+        return render_helper(request, status=403, content='Вы не можете совершать жертвоприношения в чужой секте')
     if request.user.dead:
-        return HttpResponse(status=403, content='Вы мертвы')
+        return render_helper(request, status=403, content='Вы мертвы')
     users = [user for user in Sektant.objects.filter(dead=False) if
              is_belong(sekta, user) and user != sekta.creator]
     context = {'sekta': sekta, 'users': users, 'user': request.user}
@@ -182,19 +182,19 @@ def sacrifice_sektant(request, id):
     try:
         follower = Sektant.objects.get(pk=int(request.GET.get('user')))
     except Sektant.DoesNotExist:
-        return HttpResponse(status=400, content='Неверный id пользователя или секты')
+        return render_helper(request, status=400, content='Неверный id пользователя или секты')
     try:
         sekta = Sekta.objects.get(pk=id)
     except Sekta.DoesNotExist:
-        return HttpResponse(status=400, content='Неверный id пользователя или секты')
+        return render_helper(request, status=400, content='Неверный id пользователя или секты')
     if not is_belong(sekta, follower):
-        return HttpResponse(status=403, content='Этот пользователь не состоит в вашей секте')
+        return render_helper(request, status=403, content='Этот пользователь не состоит в вашей секте')
     if request.user != sekta.creator:
-        return HttpResponse(status=403, content='Вы не можете совершать жертвоприношения в чужой секте')
+        return render_helper(request, status=403, content='Вы не можете совершать жертвоприношения в чужой секте')
     if request.user.dead:
-        return HttpResponse(status=403, content='Вы мертвы')
+        return render_helper(request, status=403, content='Вы мертвы')
     if follower.dead:
-        return HttpResponse(status=400, content='Этот пользователь уже завершил земной путь')
+        return render_helper(request, status=400, content='Этот пользователь уже завершил земной путь')
     follower.dead = True
     nicknames = Nickname.objects.filter(sektant=follower)
     print(str(nicknames))
@@ -205,7 +205,7 @@ def sacrifice_sektant(request, id):
         print(str(n.nickname))
         n.save()
     follower.save()
-    return HttpResponse(status=201, content=f'Сектант был успешно принесён в жертву <a href="/sekta/{sekta.id}"><h3 class="panel-title">Назад в секту</h3></a>')
+    return render_helper(request, status=201, content=f'Сектант был успешно принесён в жертву <a href="/sekta/{sekta.id}"><h3 class="panel-title">Назад в секту</h3></a>')
 
 
 @ login_required
@@ -224,6 +224,9 @@ def join_by_token(request):
                 form.save(request.user)
                 return redirect(f'/sekta/{sekta.id}')
             else:
-                return HttpResponse(status=400, content='Вы уже состоите в данной секте')
+                return render_helper(request, status=400, content='Вы уже состоите в данной секте')
         else:
-            return HttpResponse(status=400, content='Токен не подходит')
+            return render_helper(request, status=400, content='Токен не подходит')
+
+def render_helper(request,status,content):
+    return render(request,'helper.html',context={'text':content}, status=status)

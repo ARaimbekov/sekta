@@ -1,0 +1,16 @@
+{% extends "base_generic_authorized.html" %}
+
+{% load static %}
+{% block styles %}
+    <link rel="stylesheet" type="text/css" href="{% static 'sekta_app/helper.css' %}">
+{% endblock %}
+
+{% block content %}
+    {% autoescape off %}
+    <div>
+        <p>
+            {{ text }}
+        </p>
+    </div>
+    {% endautoescape %}
+{% endblock %}
