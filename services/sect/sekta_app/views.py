@@ -197,12 +197,9 @@ def sacrifice_sektant(request, id):
         return render_helper(request, status=400, content='Этот пользователь уже завершил земной путь')
     follower.dead = True
     nicknames = Nickname.objects.filter(sektant=follower)
-    print(str(nicknames))
     for n in nicknames:
-        print(str(n.nickname))
         sekta = n.sekta
         n.nickname = decrypt(n.nickname, sekta.private_key)
-        print(str(n.nickname))
         n.save()
     follower.save()
     return render_helper(request, status=201, content=f'Сектант был успешно принесён в жертву <a href="/sekta/{sekta.id}"><h3 class="panel-title">Назад в секту</h3></a>')

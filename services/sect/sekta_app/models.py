@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from base64 import b64encode
 
 
 class Sektant(AbstractUser):
@@ -30,7 +31,8 @@ class Nickname(models.Model):
 
     def __str__(self):
         if self.sektant.dead == False:
-            return str(bytes(self.nickname))
+            # return str(bytes(self.nickname))
+            return b64encode(bytes(self.nickname))
         else:
             return (bytes(self.nickname)).decode('utf-8')
 
