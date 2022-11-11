@@ -1,0 +1,15 @@
+{% extends "base_generic_authorized.html" %}
+
+<body>
+{% block content %}
+<h2>Создание секты</h2>
+<p>Создайте своё тайное общество и набирайте последователей</p>
+<p>Описание секты - это секрет, доступный лишь её участникам</p>
+
+    <form method="POST" class="form-group">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success">Создать</button>
+    </form>
+{% endblock %}
+</body>

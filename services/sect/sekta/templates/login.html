@@ -1,0 +1,16 @@
+{% extends "base_generic_non_authorized.html" %}
+
+<body>
+{% block content %}
+<div class="login-box">
+
+    <form method="POST" class="form-group">
+        <h1>Вход</h1>
+        
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success">Войти</button>
+    </form>
+</div>
+{% endblock %}
+</body>

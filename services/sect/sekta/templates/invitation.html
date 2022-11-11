@@ -1,0 +1,27 @@
+{% extends "base_generic_authorized.html" %}
+
+<body>
+    {% block content %}
+    <h2>Добавление новых сектантов</h2>
+    <p>Введите Тайное имя для выбранного сектанта, пригласите его - и он немедленно будет добавлен в вашу секту</p>
+
+    {% for user in users %}
+    <div class="user">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">{{ user.username }}</h3>
+                <form action="../invite_sektant">
+                    <input type="text" placeholder="Тайное имя" name="nickname" value="">
+                    <input type="hidden" name="sect" value={{ sekta.id }}>
+                    <input type="hidden" name="user" value={{ user.id }}>
+                    <button type="submit" class="btn btn-success">Пригласить</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    <a href="/sekta/{{ sekta.id }}">
+        <h3 class="panel-title">Назад в секту</h3>
+    </a>
+    {% endblock %}
+</body>

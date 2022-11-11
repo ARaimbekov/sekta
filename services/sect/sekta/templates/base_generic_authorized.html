@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="{% static 'sekta_app/style.css' %}">
+    <title>ВСекте</title>
+</head>
+<body>
+  {% block sidebar %}
+      <div class="w3-sidebar">
+          <h3>Добро пожаловать, {{ user.id }}.{{ user.username }}!</h3>
+        <ul class="nav">
+            <li>
+                <a href="/my_sekts">
+                    <span href>Мои секты</span>
+                </a>
+            </li>
+            <li>
+                <a href="/create_sekta">
+                    <span>Создать секту</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="/all_sekts">
+                    <span>Все секты</span>
+                </a>
+            </li>
+            <li>
+            <a href="/token">
+                    <span>Использовать пригласительный токен</span>
+                </a>
+            </li>
+            <li>
+                <a href="/logout">
+                    <span>Выйти</span>
+                </a>
+            </li>
+
+        </ul>
+      </div>
+
+  {% endblock %}
+  {% block content %}
+      <div style="margin-left:25%"></div>
+  {% endblock %}
+</body>
+</html>
