@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-import vacancies_pb2 as vacancies__pb2
+import session_vacancy.protobuf.vacancies_pb2 as vacancies__pb2
 
 
 class VacanciesStub(object):
@@ -17,25 +17,25 @@ class VacanciesStub(object):
             channel: A grpc.Channel.
         """
         self.Create = channel.unary_unary(
-                '/vacancy.Vacancies/Create',
-                request_serializer=vacancies__pb2.CreateRequest.SerializeToString,
-                response_deserializer=vacancies__pb2.Vacancy.FromString,
-                )
+            '/vacancy.Vacancies/Create',
+            request_serializer=vacancies__pb2.CreateRequest.SerializeToString,
+            response_deserializer=vacancies__pb2.Vacancy.FromString,
+        )
         self.List = channel.unary_unary(
-                '/vacancy.Vacancies/List',
-                request_serializer=vacancies__pb2.ListRequest.SerializeToString,
-                response_deserializer=vacancies__pb2.ListResponse.FromString,
-                )
+            '/vacancy.Vacancies/List',
+            request_serializer=vacancies__pb2.ListRequest.SerializeToString,
+            response_deserializer=vacancies__pb2.ListResponse.FromString,
+        )
         self.Get = channel.unary_unary(
-                '/vacancy.Vacancies/Get',
-                request_serializer=vacancies__pb2.GetRequest.SerializeToString,
-                response_deserializer=vacancies__pb2.Vacancy.FromString,
-                )
+            '/vacancy.Vacancies/Get',
+            request_serializer=vacancies__pb2.GetRequest.SerializeToString,
+            response_deserializer=vacancies__pb2.Vacancy.FromString,
+        )
         self.Edit = channel.unary_unary(
-                '/vacancy.Vacancies/Edit',
-                request_serializer=vacancies__pb2.Vacancy.SerializeToString,
-                response_deserializer=vacancies__pb2.Vacancy.FromString,
-                )
+            '/vacancy.Vacancies/Edit',
+            request_serializer=vacancies__pb2.Vacancy.SerializeToString,
+            response_deserializer=vacancies__pb2.Vacancy.FromString,
+        )
 
 
 class VacanciesServicer(object):
@@ -70,33 +70,34 @@ class VacanciesServicer(object):
 
 def add_VacanciesServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'Create': grpc.unary_unary_rpc_method_handler(
-                    servicer.Create,
-                    request_deserializer=vacancies__pb2.CreateRequest.FromString,
-                    response_serializer=vacancies__pb2.Vacancy.SerializeToString,
-            ),
-            'List': grpc.unary_unary_rpc_method_handler(
-                    servicer.List,
-                    request_deserializer=vacancies__pb2.ListRequest.FromString,
-                    response_serializer=vacancies__pb2.ListResponse.SerializeToString,
-            ),
-            'Get': grpc.unary_unary_rpc_method_handler(
-                    servicer.Get,
-                    request_deserializer=vacancies__pb2.GetRequest.FromString,
-                    response_serializer=vacancies__pb2.Vacancy.SerializeToString,
-            ),
-            'Edit': grpc.unary_unary_rpc_method_handler(
-                    servicer.Edit,
-                    request_deserializer=vacancies__pb2.Vacancy.FromString,
-                    response_serializer=vacancies__pb2.Vacancy.SerializeToString,
-            ),
+        'Create': grpc.unary_unary_rpc_method_handler(
+            servicer.Create,
+            request_deserializer=vacancies__pb2.CreateRequest.FromString,
+            response_serializer=vacancies__pb2.Vacancy.SerializeToString,
+        ),
+        'List': grpc.unary_unary_rpc_method_handler(
+            servicer.List,
+            request_deserializer=vacancies__pb2.ListRequest.FromString,
+            response_serializer=vacancies__pb2.ListResponse.SerializeToString,
+        ),
+        'Get': grpc.unary_unary_rpc_method_handler(
+            servicer.Get,
+            request_deserializer=vacancies__pb2.GetRequest.FromString,
+            response_serializer=vacancies__pb2.Vacancy.SerializeToString,
+        ),
+        'Edit': grpc.unary_unary_rpc_method_handler(
+            servicer.Edit,
+            request_deserializer=vacancies__pb2.Vacancy.FromString,
+            response_serializer=vacancies__pb2.Vacancy.SerializeToString,
+        ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'vacancy.Vacancies', rpc_method_handlers)
+        'vacancy.Vacancies', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
-
  # This class is part of an EXPERIMENTAL API.
+
+
 class Vacancies(object):
     """python3 -m grpc_tools.protoc -I . --python_out=. --grpc_python_out=. vacancies.proto
 
@@ -104,37 +105,37 @@ class Vacancies(object):
 
     @staticmethod
     def Create(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
+               target,
+               options=(),
+               channel_credentials=None,
+               call_credentials=None,
+               insecure=False,
+               compression=None,
+               wait_for_ready=None,
+               timeout=None,
+               metadata=None):
         return grpc.experimental.unary_unary(request, target, '/vacancy.Vacancies/Create',
-            vacancies__pb2.CreateRequest.SerializeToString,
-            vacancies__pb2.Vacancy.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+                                             vacancies__pb2.CreateRequest.SerializeToString,
+                                             vacancies__pb2.Vacancy.FromString,
+                                             options, channel_credentials,
+                                             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
     def List(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
+             target,
+             options=(),
+             channel_credentials=None,
+             call_credentials=None,
+             insecure=False,
+             compression=None,
+             wait_for_ready=None,
+             timeout=None,
+             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/vacancy.Vacancies/List',
-            vacancies__pb2.ListRequest.SerializeToString,
-            vacancies__pb2.ListResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+                                             vacancies__pb2.ListRequest.SerializeToString,
+                                             vacancies__pb2.ListResponse.FromString,
+                                             options, channel_credentials,
+                                             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
     def Get(request,
@@ -148,24 +149,24 @@ class Vacancies(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/vacancy.Vacancies/Get',
-            vacancies__pb2.GetRequest.SerializeToString,
-            vacancies__pb2.Vacancy.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+                                             vacancies__pb2.GetRequest.SerializeToString,
+                                             vacancies__pb2.Vacancy.FromString,
+                                             options, channel_credentials,
+                                             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
     def Edit(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
+             target,
+             options=(),
+             channel_credentials=None,
+             call_credentials=None,
+             insecure=False,
+             compression=None,
+             wait_for_ready=None,
+             timeout=None,
+             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/vacancy.Vacancies/Edit',
-            vacancies__pb2.Vacancy.SerializeToString,
-            vacancies__pb2.Vacancy.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+                                             vacancies__pb2.Vacancy.SerializeToString,
+                                             vacancies__pb2.Vacancy.FromString,
+                                             options, channel_credentials,
+                                             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

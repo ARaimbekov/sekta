@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('token', models.CharField(max_length=40)),
-                ('description', models.CharField(max_length=120)),
+                ('description', models.CharField(max_length=2048)),
                 ('is_active', models.BooleanField()),
                 ('sekta', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='sekta_app.sekta')),
             ],

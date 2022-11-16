@@ -5,7 +5,6 @@ import random
 import sys
 
 import requests
-
 import session_sect.session as sect_session
 import session_vacancy.session as vacancy_session
 import utils.exceptions as excepts
@@ -56,10 +55,10 @@ class Checker():
             utils.die(exception.Status, *exception.Messages)
 
         except requests.exceptions.ConnectionError as e:
-            print(f"{e.request.method} {e.request.url}\n" +
-                  str(excepts.Status.DOWN) +
-                  str(e), file=sys.stderr, flush=True)
-            exit(code=excepts.Status.DOWN)
+            utils.die(
+                excepts.Status.DOWN,
+                f"URL:{e.request.method} {e.request.url}\n",
+                e)
 
         except Exception as e:
             utils.die(excepts.Status.CHECKER_ERROR, e)
@@ -92,13 +91,15 @@ class Checker():
 
         for _ in range(random.randint(2, 5)):
             dummy = sect_session.SessionSect(self.sectHost, "dummy")
-            dummy.Register()
+            dummy.Register(self.gen.GenUserName(), self.gen.GenPassword())
             dummy.Login()
             owner.Invite(dummy.Id, self.gen.GenUserName())
 
         vacancy.Create(owner.SectId, self.gen.GenVacancyDescription())
 
-        print(f"{self.flagId}#{owner.Name}#{owner.Password}", end="")
+        ownerName = owner.Name.replace(" ", "_")
+
+        print(f"{self.flagId}#{ownerName}#{owner.Password}", end="")
 
     def get(self):
         utils.log(f"run on {self.sectHost} and {self.vacancyHost}")
@@ -106,7 +107,7 @@ class Checker():
         owner = sect_session.SessionSect(self.sectHost, "owner")
 
         args = self.flagId.split("#")
-        owner.Name = args[1]
+        owner.Name = args[1].replace("_", " ")
         owner.Password = args[2]
 
         owner.Login()
@@ -114,7 +115,7 @@ class Checker():
         description = owner.GetSectDescription()
 
         if description != self.flag:
-            raise excepts.CorruptException("flag not found")
+            raise excepts.CorruptException("Flag not found")
 
 
 if __name__ == "__main__":

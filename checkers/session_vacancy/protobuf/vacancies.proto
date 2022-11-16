@@ -24,7 +24,6 @@ message Vacancy {
     string token  = 6;
 }
 
-
 message ListResponse {
     repeated Vacancy vacancies = 1;
 }

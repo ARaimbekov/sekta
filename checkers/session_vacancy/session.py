@@ -5,11 +5,10 @@
 import copy
 
 import grpc
-import utils.exceptions as excepts
-import utils.utils as utils
-
 import session_vacancy.protobuf.vacancies_pb2 as v
 import session_vacancy.protobuf.vacancies_pb2_grpc as v_grpc
+import utils.exceptions as excepts
+import utils.utils as utils
 
 
 class Vacancy:
@@ -29,7 +28,7 @@ class SessionVacancy:
         self.stub = v_grpc.VacanciesStub(channel)
 
     def Create(self, sectId: int, description: str) -> Vacancy:
-        utils.log(f"[{self.debugName}]")
+        utils.log(f"[{self.debugName}] ...")
 
         req = v.CreateRequest(
             sect_id=sectId,
@@ -58,7 +57,7 @@ class SessionVacancy:
         return self.Vacancy
 
     def GetBad(self, vacancyId: int):
-        utils.log(f"[{self.debugName}]")
+        utils.log(f"[{self.debugName}] ...")
 
         req = v.GetRequest(id=vacancyId)
 
@@ -70,7 +69,7 @@ class SessionVacancy:
         raise excepts.MumbleException("get method expected to fail")
 
     def Edit(self, description: str, isActive: bool):
-        utils.log(f"[{self.debugName}]")
+        utils.log(f"[{self.debugName}] ...")
 
         req = v.Vacancy(
             id=self.Vacancy.Id,
@@ -100,7 +99,7 @@ class SessionVacancy:
                 self.Vacancy.IsActive)
 
     def Get(self, vacancyId: int):
-        utils.log(f"[{self.debugName}]")
+        utils.log(f"[{self.debugName}] ...")
 
         req = v.GetRequest(id=vacancyId)
 
@@ -117,14 +116,14 @@ class SessionVacancy:
             token=resp.token)
 
         try:
-            assert vars(self.Vacancy) == vars(receivedVacancy), "wrong vacancy"
+            assert vars(self.Vacancy) == vars(receivedVacancy), "Getting vacancy failed"
         except AssertionError as e:
             raise excepts.MumbleException(e,
                                           "Expected:", vars(self.Vacancy),
                                           "Received:", vars(receivedVacancy))
 
     def List(self):
-        utils.log(f"[{self.debugName}]")
+        utils.log(f"[{self.debugName}] ...")
 
         try:
             resp = self.stub.List(v.ListRequest())

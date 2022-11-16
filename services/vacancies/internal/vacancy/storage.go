@@ -33,6 +33,7 @@ func (s *Storage) Get(id int, name string, isOnlyActive bool) (v *Vacancy, err e
 	query := fmt.Sprintf(`
 	select
 		v.id,
+		v.sekta_id,
 		v.token,
 		v.description,
 		v.is_active,
@@ -102,16 +103,12 @@ func (s *Storage) Create(dto *CreateDTO) (v *Vacancy, err error) {
 
 func (s *Storage) Edit(dto *EditDTO, v *Vacancy) (err error) {
 
-	if dto.Description != "" {
-		v.Description = dto.Description
-	}
+	return s.db.
+		Model(&Vacancy{}).
+		Where("id = ?", dto.Id).
+		Updates(map[string]any{
+			"description": dto.Description,
+			"is_active":   dto.IsActive,
+		}).Error
 
-	v.IsActive = dto.IsActive
-
-	err = s.db.Save(&v).Error
-	if err != nil {
-		return
-	}
-
-	return
 }

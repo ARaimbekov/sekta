@@ -25,8 +25,8 @@ class TextGenerator:
         acolyte_alias = random.choice(self.storage['acolytes_alias'])
         idol = random.choice(self.storage['idol'])
         randNum = str(random.randint(1, 999))
-        name = f"{acolyte_alias} of {idol} {randNum}"
-        description = f"Group of {acolyte_alias}, who believe in {idol}"
+        name = f"{acolyte_alias} {idol} {randNum}"
+        description = f"Добро пожаловать. Мы {acolyte_alias}, которые поклоняются {idol}"
         return name, description
 
     def GenVacancyDescription(self) -> str:
@@ -38,9 +38,9 @@ class TextGenerator:
 
         benefits = random.sample(
             self.storage['vacancy']["benefit"], random.randint(2, 5))
-        benefits = " + "+("\n + ".join(benefits))
+        benefits = ", ".join(benefits)
 
-        return f"{require} {adjectives} acolytes in our sect. Our benefits:\n{benefits}"
+        return f"{require} {adjectives} сектантов в наш дружный коллектив. Преимущества нашей секты: {benefits}"
 
     def GenFlag(self) -> str:
         flag = ""

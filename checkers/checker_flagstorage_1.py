@@ -4,7 +4,6 @@
 import sys
 
 import requests
-
 import session_sect.session as sect_session
 import session_vacancy.session as vacancy_session
 import utils.exceptions as excepts
@@ -57,10 +56,10 @@ class Checker():
             utils.die(exception.Status, *exception.Messages)
 
         except requests.exceptions.ConnectionError as e:
-            print(f"{e.request.method} {e.request.url}\n" +
-                  str(excepts.Status.DOWN) +
-                  str(e), file=sys.stderr, flush=True)
-            exit(code=excepts.Status.DOWN)
+            utils.die(
+                excepts.Status.DOWN,
+                f"URL:{e.request.method} {e.request.url}\n",
+                e)
 
         except Exception as e:
             utils.die(excepts.Status.CHECKER_ERROR, e)
@@ -70,7 +69,8 @@ class Checker():
         owner = sect_session.SessionSect(self.sectHost, "owner")
         dummy = sect_session.SessionSect(self.sectHost, "dummy")
         dummy2 = sect_session.SessionSect(self.sectHost, "dummy2")
-        vacancy = vacancy_session.SessionVacancy(self.vacancyHost, "vacancy")
+        vacancyOwner = vacancy_session.SessionVacancy(
+            self.vacancyHost, "vacancy")
 
         owner.AskRoot()
         owner.Register(self.gen.GenUserName(), self.gen.GenPassword())
@@ -87,23 +87,23 @@ class Checker():
         owner.GetAllSects()
         owner.GetMySects()
         acolytes = owner.GetMySect()
-        dummy.InSect(acolytes)
 
+        dummy.InSect(acolytes)
         owner.Sacrifice(dummy.Id)
         acolytes = owner.GetMySect()
         dummy.IsDead(dummyAcolyteName, acolytes)
 
-        v = vacancy.Create(int(owner.SectId), self.gen.GenVacancyDescription())
-        owner.CheckToken(v.Token)
-        vacancy.List()
-        vacancy.GetBad(vacancy.Vacancy.Id)
-        vacancy.Edit(self.gen.GenVacancyDescription(), True)
-        vacancy.Get(vacancy.Vacancy.Id)
+        vacancyOwner.Create(owner.SectId, self.gen.GenVacancyDescription())
+        owner.CheckToken(vacancyOwner.Vacancy.Token)
+        vacancyOwner.List()
+        vacancyOwner.GetBad(vacancyOwner.Vacancy.Id)
+        vacancyOwner.Edit(self.gen.GenVacancyDescription(), True)
+        vacancyOwner.Get(vacancyOwner.Vacancy.Id)
 
         dummy2.Register(self.gen.GenUserName(), self.gen.GenPassword())
         dummy2.Login()
-        dummy2.Join(vacancy.Vacancy.SectId,
-                    vacancy.Vacancy.Token,
+        dummy2.Join(vacancyOwner.Vacancy.SectId,
+                    vacancyOwner.Vacancy.Token,
                     self.gen.GenUserName())
         owner.Logout()
 
@@ -114,10 +114,10 @@ class Checker():
         dummy = sect_session.SessionSect(self.sectHost, "dummy")
         vacancy = vacancy_session.SessionVacancy(self.vacancyHost, "vacancy")
 
-        owner.Register()
+        owner.Register(self.gen.GenUserName(), self.gen.GenPassword())
         owner.Login()
 
-        dummy.Register()
+        dummy.Register(self.gen.GenUserName(), self.gen.GenPassword())
         dummy.Login()
 
         sectName, sectDescription = self.gen.GenSectInfo()
@@ -130,19 +130,27 @@ class Checker():
                 encryptedFlag = encryptedSecretName
                 break
 
-        vacancy.Create(owner.SectId)
+        vacancy.Create(owner.SectId, self.gen.GenVacancyDescription())
+
+        ownerName = owner.Name.replace(" ", "_")
 
         print(
-            f"{self.flagId}#{owner.Name}#{owner.Password}#{encryptedFlag}", end="")
+            f"{self.flagId}#{ownerName}#{owner.Password}#{encryptedFlag}",
+            end="",
+            flush=True,
+        )
 
     def get(self):
         utils.log(f"run on {self.sectHost} and {self.vacancyHost}")
-        utils.log(f"creds: flag_id = {self.flagId}\t flag={self.flag}")
+        utils.log(f"""creds:
+                flag_id = {self.flagId}
+                flag={self.flag}
+            """)
 
         master = sect_session.SessionSect(self.sectHost, "master")
 
         args = self.flagId.split("#")
-        master.Name = args[1]
+        master.Name = args[1].replace("_", " ")
         master.Password = args[2]
         encryptedFlag = args[3]
 
