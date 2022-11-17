@@ -67,13 +67,13 @@ class Checker():
         utils.log(f"run on {self.sectHost} and {self.vacancyHost}")
 
         owner = sect_session.SessionSect(self.sectHost, "owner")
-        dummy = sect_session.SessionSect(host=self.sectHost, debugName="dummy")
+        acolyte = sect_session.SessionSect(host=self.sectHost, debugName="acolyte")
 
         owner.AskRoot()
         owner.Register(self.gen.GenUserName(), self.gen.GenPassword())
-        dummy.Register(self.gen.GenUserName(), self.gen.GenPassword())
+        acolyte.Register(self.gen.GenUserName(), self.gen.GenPassword())
         owner.Login()
-        dummy.Login()
+        acolyte.Login()
 
         sectName, sectDescription = self.gen.GenSectInfo()
         owner.CreateSekta(sectName, sectDescription)
@@ -82,7 +82,7 @@ class Checker():
         utils.log(f"run on {self.sectHost} and {self.vacancyHost}")
 
         owner = sect_session.SessionSect(self.sectHost, "owner")
-        vacancy = vacancy_session.SessionVacancy(self.vacancyHost, "vacancy")
+        vacancyOwner = vacancy_session.SessionVacancy(self.vacancyHost, "vacancy owner")
 
         owner.Register(self.gen.GenUserName(), self.gen.GenPassword())
         owner.Login()
@@ -90,12 +90,12 @@ class Checker():
         owner.CreateSekta(sectName, self.flag)
 
         for _ in range(random.randint(2, 5)):
-            dummy = sect_session.SessionSect(self.sectHost, "dummy")
+            dummy = sect_session.SessionSect(self.sectHost, "acolyte")
             dummy.Register(self.gen.GenUserName(), self.gen.GenPassword())
             dummy.Login()
             owner.Invite(dummy.Id, self.gen.GenUserName())
 
-        vacancy.Create(owner.SectId, self.gen.GenVacancyDescription())
+        vacancyOwner.Create(owner.SectId, self.gen.GenVacancyDescription())
 
         ownerName = owner.Name.replace(" ", "_")
 

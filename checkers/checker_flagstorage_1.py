@@ -67,31 +67,19 @@ class Checker():
     def check(self):
         utils.log(f"run on {self.sectHost} and {self.vacancyHost}")
         owner = sect_session.SessionSect(self.sectHost, "owner")
-        dummy = sect_session.SessionSect(self.sectHost, "dummy")
-        dummy2 = sect_session.SessionSect(self.sectHost, "dummy2")
+        acolyte = sect_session.SessionSect(self.sectHost, "acolyte")
+        acolyte_2 = sect_session.SessionSect(self.sectHost, "acolyte 2")
         vacancyOwner = vacancy_session.SessionVacancy(
-            self.vacancyHost, "vacancy")
+            self.vacancyHost, "vacancy owner")
 
         owner.AskRoot()
         owner.Register(self.gen.GenUserName(), self.gen.GenPassword())
-        dummy.Register(self.gen.GenUserName(), self.gen.GenPassword())
+        acolyte.Register(self.gen.GenUserName(), self.gen.GenPassword())
         owner.Login()
-        dummy.Login()
+        acolyte.Login()
 
         sectName, sectDescription = self.gen.GenSectInfo()
         owner.CreateSekta(sectName, sectDescription)
-
-        dummyAcolyteName = self.gen.GenUserName()
-        owner.Invite(dummy.Id, dummyAcolyteName)
-
-        owner.GetAllSects()
-        owner.GetMySects()
-        acolytes = owner.GetMySect()
-
-        dummy.InSect(acolytes)
-        owner.Sacrifice(dummy.Id)
-        acolytes = owner.GetMySect()
-        dummy.IsDead(dummyAcolyteName, acolytes)
 
         vacancyOwner.Create(owner.SectId, self.gen.GenVacancyDescription())
         owner.CheckToken(vacancyOwner.Vacancy.Token)
@@ -100,37 +88,50 @@ class Checker():
         vacancyOwner.Edit(self.gen.GenVacancyDescription(), True)
         vacancyOwner.Get(vacancyOwner.Vacancy.Id)
 
-        dummy2.Register(self.gen.GenUserName(), self.gen.GenPassword())
-        dummy2.Login()
-        dummy2.Join(vacancyOwner.Vacancy.SectId,
-                    vacancyOwner.Vacancy.Token,
-                    self.gen.GenUserName())
+        dummyAcolyteName = self.gen.GenUserName()
+        owner.Invite(acolyte.Id, dummyAcolyteName)
+
+        owner.GetAllSects()
+        owner.GetMySects()
+        acolytes = owner.GetMySect()
+
+        acolyte.InSect(acolytes)
+        owner.Sacrifice(acolyte.Id)
+        acolytes = owner.GetMySect()
+        acolyte.IsDead(dummyAcolyteName, acolytes)
+
+        acolyte_2.Register(self.gen.GenUserName(), self.gen.GenPassword())
+        acolyte_2.Login()
+        acolyte_2.Join(vacancyOwner.Vacancy.SectId,
+                       vacancyOwner.Vacancy.Token,
+                       self.gen.GenUserName())
         owner.Logout()
 
     def put(self):
         utils.log(f"run on {self.sectHost} and {self.vacancyHost}")
 
         owner = sect_session.SessionSect(self.sectHost, "owner")
-        dummy = sect_session.SessionSect(self.sectHost, "dummy")
-        vacancy = vacancy_session.SessionVacancy(self.vacancyHost, "vacancy")
+        acolyte = sect_session.SessionSect(self.sectHost, "acolyte")
+        vacancyOwner = vacancy_session.SessionVacancy(
+            self.vacancyHost, "vacancy owner")
 
         owner.Register(self.gen.GenUserName(), self.gen.GenPassword())
         owner.Login()
 
-        dummy.Register(self.gen.GenUserName(), self.gen.GenPassword())
-        dummy.Login()
+        acolyte.Register(self.gen.GenUserName(), self.gen.GenPassword())
+        acolyte.Login()
 
         sectName, sectDescription = self.gen.GenSectInfo()
         owner.CreateSekta(sectName, sectDescription)
-        owner.Invite(dummy.Id, self.flag)
+        owner.Invite(acolyte.Id, self.flag)
 
         acolytes = owner.GetMySect()
         for (name, encryptedSecretName) in acolytes:
-            if name == dummy.Name:
+            if name == acolyte.Name:
                 encryptedFlag = encryptedSecretName
                 break
 
-        vacancy.Create(owner.SectId, self.gen.GenVacancyDescription())
+        vacancyOwner.Create(owner.SectId, self.gen.GenVacancyDescription())
 
         ownerName = owner.Name.replace(" ", "_")
 
@@ -147,16 +148,16 @@ class Checker():
                 flag={self.flag}
             """)
 
-        master = sect_session.SessionSect(self.sectHost, "master")
+        owner = sect_session.SessionSect(self.sectHost, "owner")
 
         args = self.flagId.split("#")
-        master.Name = args[1].replace("_", " ")
-        master.Password = args[2]
+        owner.Name = args[1].replace("_", " ")
+        owner.Password = args[2]
         encryptedFlag = args[3]
 
-        master.Login()
-        master.GetMySectsNoCheck()
-        acolytes = master.GetMySect()
+        owner.Login()
+        owner.GetMySectsNoCheck()
+        acolytes = owner.GetMySect()
 
         for _, secretName in acolytes:
             if encryptedFlag == secretName:
