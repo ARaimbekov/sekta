@@ -86,3 +86,20 @@ form {
     width: fit-content;
 }
 
+a:link {
+    color: crimson;
+}
+
+a:visited {
+    color: firebrick;
+}
+
+ul {
+    list-style-type: "✠";
+    list-style-position: inside;
+}
+
+.dead-sektant {
+    text-decoration: line-through;
+}
+
