@@ -157,7 +157,12 @@ def invite_to_sekta(request, id):
         return render_helper(request, status=403, content='Вы мертвы')
     users = [user for user in Sektant.objects.filter(can_be_invited=True) if not is_belong(
         sekta, user) and user != sekta.creator and not user.dead]
-    context = {'sekta': sekta, 'users': users, 'user': request.user}
+    paginator = Paginator(users, 20)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {'sekta': sekta, 'page_obj': page_obj, 'user': request.user}
     return render(request, 'invitation.html', context)
 
 
@@ -173,7 +178,11 @@ def sacrifice(request, id):
         return render_helper(request, status=403, content='Вы мертвы')
     users = [user for user in Sektant.objects.filter(dead=False) if
              is_belong(sekta, user) and user != sekta.creator]
-    context = {'sekta': sekta, 'users': users, 'user': request.user}
+    paginator = Paginator(users, 20)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context = {'sekta': sekta, 'page_obj': page_obj, 'user': request.user}
     return render(request, 'sacrifice.html', context)
 
 

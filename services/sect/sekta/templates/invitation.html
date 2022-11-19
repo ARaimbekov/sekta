@@ -5,7 +5,7 @@
     <h2>Добавление новых сектантов</h2>
     <p>Введите Тайное имя для выбранного сектанта, пригласите его - и он немедленно будет добавлен в вашу секту</p>
 
-    {% for user in users %}
+    {% for user in page_obj %}
     <div class="user">
         <div class="panel panel-default">
             <div class="panel-heading">
@@ -20,6 +20,22 @@
         </div>
     </div>
     {% endfor %}
+    <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+            {% endif %}
+    
+            <span class="current">
+                Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}.
+    
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">&ldquo;</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">&raquo;</a>
+            {% endif %}
+        </span>
+    </div>
     <a href="/sekta/{{ sekta.id }}">
         <h3 class="panel-title">Назад в секту</h3>
     </a>

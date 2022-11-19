@@ -19,7 +19,7 @@ class UserLoginForm(AuthenticationForm):
         self.fields['username'].widget.attrs['placeholder'] = 'логин'
         self.fields['username'].label = 'Логин'
         self.fields['password'].widget.attrs['placeholder'] = 'пароль'
-        self.fields['password'].label='Пароль'
+        self.fields['password'].label = 'Пароль'
         for field_name, field in self.fields.items():
             field.widget.attrs['class'] = f'login-form-{field_name}'
 
@@ -32,15 +32,17 @@ class UserLoginForm(AuthenticationForm):
 
 class RegisterForm(ModelForm):
     username = forms.CharField(
-        max_length=100, widget=forms.TextInput(attrs={'placeholder': 'логин'}),label='Логин')
+        max_length=100, widget=forms.TextInput(attrs={'placeholder': 'логин'}),
+        label='Логин', error_messages={'unique': 'Пользователь с таким именем уже зарегистрирован'})
     password = forms.CharField(
-        widget=PasswordInput(attrs={'placeholder': 'пароль'}),label='Пароль')
-    can_be_invited = forms.BooleanField(required=False, label='Разрешить приглашать меня в секты')
+        widget=PasswordInput(attrs={'placeholder': 'пароль'}), label='Пароль')
+    can_be_invited = forms.BooleanField(
+        required=False, label='Разрешить приглашать меня в секты')
 
     class Meta:
         model = Sektant
         fields = ["username", "password", "can_be_invited"]
-
+        
     def save(self, *args, commit=True, **kwargs):
         sektant = super().save(*args, commit=commit, **kwargs)
         sektant.set_password(self.cleaned_data['password'])
@@ -54,25 +56,29 @@ class SektaCreationForm(ModelForm):
 
     class Meta:
         model = Sekta
-        fields = ['sektaname','description']
+        fields = ['sektaname', 'description']
 
     def save(self, user):
-        sekta = Sekta(creator=user,sektaname=self.cleaned_data['sektaname'],description=self.cleaned_data['description'],private_key=token_bytes(16))
+        sekta = Sekta(creator=user, sektaname=self.cleaned_data['sektaname'],
+                      description=self.cleaned_data['description'], private_key=token_bytes(16))
         sekta.save()
         return sekta
 
+
 class TokenInputForm(ModelForm):
     nickname = forms.CharField(label='Тайное имя')
+
     class Meta:
         model = Vacancy
-        fields = ['sekta','token']
+        fields = ['sekta', 'token']
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.fields['sekta'].label = 'Секта'
         self.fields['token'].label = 'Пригласительный токен'
 
-    def save(self,user):
-        sekta=self.cleaned_data['sekta']
-        nickname = Nickname(sekta=sekta,sektant=user,nickname=encrypt((self.cleaned_data['nickname']).encode('utf-8'),sekta.private_key))
+    def save(self, user):
+        sekta = self.cleaned_data['sekta']
+        nickname = Nickname(sekta=sekta, sektant=user, nickname=encrypt(
+            (self.cleaned_data['nickname']).encode('utf-8'), sekta.private_key))
         nickname.save()
