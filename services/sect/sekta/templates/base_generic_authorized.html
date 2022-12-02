@@ -10,8 +10,8 @@
 <body>
   {% block sidebar %}
       <div class="w3-sidebar">
-          <h3>Добро пожаловать, {{ user.id }}.{{ user.username }}!</h3>
-        <ul class="nav">
+          <h3 id="sidebar-title">Добро пожаловать, {{ user.id }}.{{ user.username }}!</h3>
+        <ul class="sidenav">
             <li>
                 <a href="/my_sekts">
                     <span href>Мои секты</span>

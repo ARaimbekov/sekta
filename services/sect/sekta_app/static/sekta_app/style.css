@@ -3,6 +3,12 @@
     padding: 0;
 
 }
+
+html {
+    height: 100%;
+    min-height: 100%;
+    max-height: 100%;
+}
 @font-face {
     font-family: Uroob;
     src: url(fonts/Uroob.woff.ttf);
@@ -16,7 +22,26 @@ body{
     font-family: Uroob ;
     font-size: 20px;
     color: #fff;
-    margin-left: 40%;
+    margin-left: 30%;
+    overflow: hidden;
+    height:100%;
+}
+
+.container {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    height: 60vh;
+    justify-content: left;
+    margin: 0px;
+    overflow: hidden;
+    padding: 0px;
+    gap: 10px 10px;
+    margin-top: 10%;
+}
+
+#wrap {
+    flex-wrap: wrap;
 }
 
 .login-box{
@@ -27,11 +52,21 @@ body{
 }
 
 h1{
-    padding-bottom: 50px;
+    padding-bottom: 25px;
     color: #fff;
     font-weight: lighter;
     color: whitesmoke;
     text-align: center;   
+}
+
+h2{
+    margin-top: 20px;
+}
+
+#sidebar-title{
+    padding-top: 25px;
+    padding-bottom: 50px;
+    text-align: center;
 }
 
 input{
@@ -86,20 +121,101 @@ form {
     width: fit-content;
 }
 
-a:link {
-    color: crimson;
+
+.sidenav a:link {
+    padding: 6px 8px 6px 16px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #dc143c;
+}
+
+.sidenav a:hover {
+    color: #f1f1f1;
 }
 
 a:visited {
-    color: firebrick;
+    color: hsl(0, 68%, 42%);
 }
 
-ul {
+.sidenav {
     list-style-type: "✠";
     list-style-position: inside;
-}
+    
+} */
 
 .dead-sektant {
     text-decoration: line-through;
 }
 
+.pagination {
+    position: fixed;
+    bottom: 5%;
+
+}
+
+#cards {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    gap: 16px;
+    width: calc(100% - 20px);
+    flex-grow: 1;
+}
+
+.card {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    height: 200px;
+    flex-direction: column;
+    position: relative;
+    width: 200px;
+  }
+  
+.card-image > h1 {
+    font-size: 20em;
+    opacity: 0.25;
+}
+
+.card>.card-content {
+      border-radius: inherit;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      inset: 1px;
+      padding: 10px;
+      position: absolute;
+      z-index: 2;
+}
+
+
+.card-info-wrapper {
+    align-items: center;
+    display: flex;
+    flex-grow: 1;
+    justify-content: flex-start;
+    padding: 0px 20px;
+  }
+  
+  .card-info {
+    align-items: flex-start;
+    display: flex;
+    gap: 10px;
+  }
+  
+  .card-info > i {  
+    font-size: 1em;
+    height: 20px;
+    line-height: 20px;
+  }
+  
+  .card-info-title > h3 {
+    font-size: 1.1em;
+    line-height: 20px;
+  }
+  
+  .card-info-title > h4 {
+    font-size: 0.85em;
+    margin-top: 8px;
+  }
