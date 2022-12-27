@@ -246,7 +246,7 @@ class SessionSect:
         utils.log(f"[{self.debugName}] ...")
 
         for a in acolytes:
-            if self.Name == a[0]:
+            if self.Name == a[0].strip():
                 return
 
         raise excepts.MumbleException(

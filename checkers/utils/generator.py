@@ -27,7 +27,7 @@ class TextGenerator:
         randNum = str(random.randint(1, 999))
         name = f"{acolyte_alias} {idol} {randNum}"
         description = f"Добро пожаловать. Мы {acolyte_alias}, которые живут во имя {idol}"
-        return name, self.GenFlag()
+        return name, description
 
     def GenVacancyDescription(self) -> str:
         require = random.choice(self.storage['vacancy']['require_alias'])
