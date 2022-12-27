@@ -90,10 +90,10 @@ class Checker():
         owner.CreateSekta(sectName, self.flag)
 
         for _ in range(random.randint(2, 5)):
-            dummy = sect_session.SessionSect(self.sectHost, "acolyte")
-            dummy.Register(self.gen.GenUserName(), self.gen.GenPassword())
-            dummy.Login()
-            owner.Invite(dummy.Id, self.gen.GenUserName())
+            acolyte = sect_session.SessionSect(self.sectHost, "acolyte")
+            acolyte.Register(self.gen.GenUserName(), self.gen.GenPassword())
+            acolyte.Login()
+            owner.Invite(acolyte.Id, self.gen.GenUserName())
 
         vacancyOwner.Create(owner.SectId, self.gen.GenVacancyDescription())
 
