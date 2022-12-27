@@ -65,8 +65,8 @@ button{
 .w3-sidebar{
     background: black;
     top: 0%;
-    left: 0%;
-    width: 20%;
+    /* left: 0%; */
+    width: 40%;
     height: 100%;
     position:absolute;
     font-size: 25px;
@@ -84,5 +84,18 @@ form {
     border-bottom: 1px gray solid ;
     padding: 10px 5px;
     width: fit-content;
+}
+
+a:link {
+    color: crimson;
+}
+
+a:visited {
+    color: firebrick;
+}
+
+ul.a {
+    list-style-type: "✠";
+    list-style-position: inside;
 }
 

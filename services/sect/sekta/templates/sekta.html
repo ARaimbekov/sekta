@@ -21,7 +21,13 @@
     {% endif %}
     <h3>Участники:</h3>
     {% for sektant,nickname in participants %}
-    <li>{{ sektant.username }} Тайное имя: {{ nickname }}</li>
+        {% if sektant.dead %}
+            <li class="dead-sektant">
+        {% else %}
+            <li>
+        {% endif %}
+            {{ sektant.username }} Тайное имя: {{ nickname }}
+        </li>
     {% empty %}
         <div>
             <p>-</p>
