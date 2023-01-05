@@ -1,0 +1,26 @@
+version: "3.0"
+
+services:
+  vacancies:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    restart: on-failure
+    volumes:
+      - ./vacancies:/vacancies
+    ports:
+      - "8033:8080"
+    depends_on:
+      - db
+
+  db:
+    image: postgres
+    volumes:
+      - postgres_db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+
+volumes:
+  postgres_db:
