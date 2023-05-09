@@ -2,12 +2,11 @@ from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Q
-from django.http import HttpResponse
 from django.shortcuts import redirect, render
 
 from .forms import (RegisterForm, SektaCreationForm, TokenInputForm,
                     UserLoginForm)
-from .helpers import decrypt, encrypt, is_belong
+from .helpers import is_belong
 from .models import Nickname, Sekta, Sektant, Vacancy
 
 
@@ -95,8 +94,10 @@ def create_sekta(request):
 @login_required
 def show_sekta(request, id):
     sekta = Sekta.objects.get(pk=id)
-    participants = [[sektant, [nickname.__str__() for nickname in Nickname.objects.filter(
-        sektant=sektant)]] for sektant in Sektant.objects.all() if is_belong(sekta, sektant)]
+    participants = [
+        (sektant, Nickname.objects.filter(sektant=sektant))
+        for sektant in Sektant.objects.all() if is_belong(sekta, sektant)
+        ]
 
     if request.user != sekta.creator and not is_belong(sekta, request.user):
         return render_helper(request, status=403, content='Вы не входите в секту')
@@ -139,8 +140,10 @@ def invite_sektant(request, id):
         return render_helper(request, status=400, content='Этот пользователь уже завершил земной путь')
     if follower == request.user:
         return render_helper(request, status=400, content='Вы не можете пригласить сами себя')
-    nickname = Nickname(sektant=follower, sekta=Sekta.objects.get(pk=id), nickname=encrypt(
-        (new_name).encode('utf-8'), Sekta.objects.get(pk=id).private_key))
+    nickname = Nickname(
+        sektant=follower, 
+        sekta=Sekta.objects.get(pk=id), 
+        nickname=new_name)
     nickname.save()
     return render_helper(request, status=201, content=f'Сектант был успешно приглашен <a href="/sekta/{sekta.id}"><h3 class="panel-title">Назад в секту</h3></a>')
 
@@ -205,11 +208,6 @@ def sacrifice_sektant(request, id):
     if follower.dead:
         return render_helper(request, status=400, content='Этот пользователь уже завершил земной путь')
     follower.dead = True
-    nicknames = Nickname.objects.filter(sektant=follower)
-    for n in nicknames:
-        sekta = n.sekta
-        n.nickname = decrypt(n.nickname, sekta.private_key)
-        n.save()
     follower.save()
     return render_helper(request, status=201, content=f'Сектант был успешно принесён в жертву <a href="/sekta/{sekta.id}"><h3 class="panel-title">Назад в секту</h3></a>')
 
@@ -234,5 +232,6 @@ def join_by_token(request):
         else:
             return render_helper(request, status=400, content='Токен не подходит')
 
-def render_helper(request,status,content):
-    return render(request,'helper.html',context={'text':content}, status=status)
+
+def render_helper(request, status, content):
+    return render(request, 'helper.html', context={'text': content}, status=status)
