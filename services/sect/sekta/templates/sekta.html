@@ -13,20 +13,29 @@
     {% endif %}
 
     {% if creator %}
-        <p>Только вы знаете Тайные имена всех последователей (ведь вы их приглашали)</p>
+        <p>Только вы видите Тайные имена всех последователей</p>
         <p>Лишь Тайные имена послуживших великой цели участников доступны прочим</p>
     {% else %}
         <p>Только наш гуру знает Тайные имена всех последователей</p>
         <p>Лишь Тайные имена послуживших великой цели участников доступны нам</p>
     {% endif %}
     <h3>Участники:</h3>
-    {% for sektant,nickname in participants %}
+    {% for sektant,nicknames in participants %}
         {% if sektant.dead %}
             <li class="dead-sektant">
         {% else %}
             <li>
         {% endif %}
-            {{ sektant.username }} Тайное имя: {{ nickname }}
+            {{ sektant.username }} <br> Тайное имя: 
+            {% for nickname in nicknames %}
+                {% if nickname.sekta != sekta %}
+                <span style="display: none;">{{ nickname }}</span>
+                {% elif creator %}
+                <span>{{ nickname.nickname }}</span>
+                {% else %}
+                <span>{{ nickname }}</span>
+                {% endif %}
+            {% endfor %}
         </li>
     {% empty %}
         <div>

@@ -1,12 +1,9 @@
-from pyexpat import model
-import uuid
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from django.forms import ModelForm, PasswordInput
 from secrets import token_bytes
 
 from .models import Nickname, Sektant, Sekta, Vacancy
-from .helpers import encrypt
 
 
 class UserLoginForm(AuthenticationForm):
@@ -53,6 +50,8 @@ class RegisterForm(ModelForm):
 
 class SektaCreationForm(ModelForm):
     sektaname = forms.CharField(max_length=100, label='Название секты')
+    can_has_vacancy = forms.BooleanField(
+        required=False, label='Разрешить вступать по пригласительному токену')
 
     class Meta:
         model = Sekta
@@ -79,6 +78,5 @@ class TokenInputForm(ModelForm):
 
     def save(self, user):
         sekta = self.cleaned_data['sekta']
-        nickname = Nickname(sekta=sekta, sektant=user, nickname=encrypt(
-            (self.cleaned_data['nickname']).encode('utf-8'), sekta.private_key))
+        nickname = Nickname(sekta=sekta, sektant=user, nickname=self.cleaned_data['nickname'])
         nickname.save()

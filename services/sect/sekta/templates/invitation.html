@@ -11,7 +11,7 @@
             <div class="panel-heading">
                 <h3 class="panel-title">{{ user.username }}</h3>
                 <form action="../invite_sektant">
-                    <input type="text" placeholder="Тайное имя" name="nickname" value="">
+                    <input type="text" placeholder="Тайное имя" name="nickname" maxlength="50" value="">
                     <input type="hidden" name="sect" value={{ sekta.id }}>
                     <input type="hidden" name="user" value={{ user.id }}>
                     <button type="submit" class="btn btn-success">Пригласить</button>
